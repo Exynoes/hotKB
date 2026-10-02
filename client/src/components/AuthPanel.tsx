@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { authApi, ApiError } from '../lib/api';
 import { useAuth } from '../lib/auth';
+import { useLang } from '../lib/i18n';
 
 type Tab = 'guest' | 'login' | 'register';
 
@@ -16,6 +17,7 @@ export default function AuthPanel() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { setIdentity } = useAuth();
+  const { t } = useLang();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -33,16 +35,16 @@ export default function AuthPanel() {
         setIdentity({ token: res.token, kind: 'user', displayName: res.user!.username });
       }
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Connexion au serveur impossible.');
+      setError(err instanceof ApiError ? err.message : t('genericError'));
     } finally {
       setLoading(false);
     }
   }
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: 'guest', label: 'Invité' },
-    { id: 'login', label: 'Se connecter' },
-    { id: 'register', label: 'Créer un compte' },
+    { id: 'guest', label: t('tabGuest') },
+    { id: 'login', label: t('tabLogin') },
+    { id: 'register', label: t('tabRegister') },
   ];
 
   return (
@@ -76,7 +78,7 @@ export default function AuthPanel() {
           <input
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            placeholder="Ton nom affiché"
+            placeholder={t('guestPlaceholder')}
             maxLength={20}
             required
             className="rounded-xl border px-4 py-3"
@@ -87,7 +89,7 @@ export default function AuthPanel() {
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Nom d'utilisateur"
+              placeholder={t('usernamePlaceholder')}
               maxLength={20}
               required
               className="rounded-xl border px-4 py-3"
@@ -96,7 +98,7 @@ export default function AuthPanel() {
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mot de passe"
+              placeholder={t('passwordPlaceholder')}
               type="password"
               minLength={6}
               required
@@ -121,10 +123,10 @@ export default function AuthPanel() {
           {loading
             ? '...'
             : tab === 'guest'
-              ? 'Jouer en invité'
+              ? t('submitGuest')
               : tab === 'login'
-                ? 'Se connecter'
-                : 'Créer mon compte'}
+                ? t('submitLogin')
+                : t('submitRegister')}
         </button>
       </form>
     </div>

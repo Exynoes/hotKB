@@ -1,16 +1,23 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AuthPanel from '../src/components/AuthPanel';
 import { AuthProvider } from '../src/lib/auth';
+import { LangProvider } from '../src/lib/i18n';
 
 function renderPanel() {
   return render(
-    <AuthProvider>
-      <AuthPanel />
-    </AuthProvider>,
+    <LangProvider>
+      <AuthProvider>
+        <AuthPanel />
+      </AuthProvider>
+    </LangProvider>,
   );
 }
+
+beforeEach(() => {
+  localStorage.setItem('hotkb:lang', 'fr');
+});
 
 describe('AuthPanel', () => {
   it('affiche le formulaire invité par défaut (AUTH-3)', () => {

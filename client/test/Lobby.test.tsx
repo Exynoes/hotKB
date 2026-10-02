@@ -1,6 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Lobby from '../src/components/Lobby';
+import { LangProvider } from '../src/lib/i18n';
 import type { LobbyState } from '../src/lib/room-types';
 
 const baseRoom: LobbyState = {
@@ -12,9 +13,21 @@ const baseRoom: LobbyState = {
   ],
 };
 
+function renderLobby(props: Parameters<typeof Lobby>[0]) {
+  return render(
+    <LangProvider>
+      <Lobby {...props} />
+    </LangProvider>,
+  );
+}
+
+beforeEach(() => {
+  localStorage.setItem('hotkb:lang', 'fr');
+});
+
 describe('Lobby', () => {
   it('affiche le code de la salle et les participants', () => {
-    render(<Lobby room={baseRoom} myId="p2" onStart={vi.fn()} onLeave={vi.fn()} />);
+    renderLobby({ room: baseRoom, myId: 'p2', onStart: vi.fn(), onLeave: vi.fn() });
 
     expect(screen.getByText('ABCDE')).toBeInTheDocument();
     expect(screen.getByText('Camille')).toBeInTheDocument();
@@ -23,17 +36,24 @@ describe('Lobby', () => {
   });
 
   it('identifie le joueur courant avec « (toi) »', () => {
-    render(<Lobby room={baseRoom} myId="p2" onStart={vi.fn()} onLeave={vi.fn()} />);
+    renderLobby({ room: baseRoom, myId: 'p2', onStart: vi.fn(), onLeave: vi.fn() });
     expect(screen.getByText(/Nathan.*\(toi\)/)).toBeInTheDocument();
   });
 
   it("ne montre le bouton « Démarrer » qu'à l'hôte", () => {
-    const { rerender } = render(
-      <Lobby room={baseRoom} myId="p2" onStart={vi.fn()} onLeave={vi.fn()} />,
-    );
+    const { rerender } = renderLobby({
+      room: baseRoom,
+      myId: 'p2',
+      onStart: vi.fn(),
+      onLeave: vi.fn(),
+    });
     expect(screen.queryByText('Démarrer la course')).not.toBeInTheDocument();
 
-    rerender(<Lobby room={baseRoom} myId="p1" onStart={vi.fn()} onLeave={vi.fn()} />);
+    rerender(
+      <LangProvider>
+        <Lobby room={baseRoom} myId="p1" onStart={vi.fn()} onLeave={vi.fn()} />
+      </LangProvider>,
+    );
     expect(screen.getByText('Démarrer la course')).toBeEnabled();
   });
 
@@ -42,7 +62,7 @@ describe('Lobby', () => {
       ...baseRoom,
       participants: [{ id: 'p1', displayName: 'Camille', isHost: true }],
     };
-    render(<Lobby room={soloRoom} myId="p1" onStart={vi.fn()} onLeave={vi.fn()} />);
+    renderLobby({ room: soloRoom, myId: 'p1', onStart: vi.fn(), onLeave: vi.fn() });
     expect(screen.getByText('Démarrer la course')).toBeDisabled();
   });
 });

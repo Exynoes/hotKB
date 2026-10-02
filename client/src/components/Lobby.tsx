@@ -1,4 +1,5 @@
 import type { LobbyState } from '../lib/room-types';
+import { useLang } from '../lib/i18n';
 
 export default function Lobby({
   room,
@@ -12,6 +13,7 @@ export default function Lobby({
   onLeave: () => void;
 }) {
   const isHost = room.participants.some((p) => p.id === myId && p.isHost);
+  const { t } = useLang();
 
   return (
     <div
@@ -21,12 +23,12 @@ export default function Lobby({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-mono tracking-widest" style={{ color: 'var(--muted)' }}>
-            CODE DE LA SALLE
+            {t('roomCodeLabel')}
           </p>
           <p className="text-3xl font-mono font-bold tracking-[0.2em]">{room.code}</p>
         </div>
         <button onClick={onLeave} className="text-sm underline underline-offset-2">
-          Quitter
+          {t('leave')}
         </button>
       </div>
 
@@ -45,14 +47,14 @@ export default function Lobby({
             </span>
             <span className="font-semibold flex-1 text-left">
               {p.displayName}
-              {p.id === myId && ' (toi)'}
+              {p.id === myId && ` ${t('you')}`}
             </span>
             {p.isHost && (
               <span
                 className="text-xs font-mono rounded-full px-2 py-1"
                 style={{ background: 'var(--accent-2)', color: '#2a1206' }}
               >
-                HÔTE
+                {t('host')}
               </span>
             )}
           </li>
@@ -61,7 +63,7 @@ export default function Lobby({
 
       {room.participants.length < 2 && (
         <p className="text-sm" style={{ color: 'var(--muted)' }}>
-          En attente d'au moins un·e autre joueur·euse pour démarrer...
+          {t('waitingForPlayers')}
         </p>
       )}
 
@@ -72,7 +74,7 @@ export default function Lobby({
           className="rounded-xl py-3 font-semibold text-white disabled:opacity-50"
           style={{ background: 'var(--accent)' }}
         >
-          Démarrer la course
+          {t('startRace')}
         </button>
       )}
     </div>
