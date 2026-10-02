@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import AuthPanel from '../components/AuthPanel';
+import { useAuth } from '../lib/auth';
 
 export default function Home() {
   const [code, setCode] = useState('');
+  const { identity, logout } = useAuth();
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-8 px-4 text-center">
+    <main className="min-h-screen flex flex-col items-center justify-center gap-8 px-4 py-12 text-center">
       <div className="flex flex-col items-center gap-2">
         <svg width="72" height="72" viewBox="0 0 220 220" aria-hidden="true">
           <path
@@ -21,33 +24,47 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
-        <input
-          value={code}
-          onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="Code de la salle"
-          maxLength={6}
-          className="flex-1 rounded-xl border px-4 py-3 text-center font-mono uppercase tracking-widest"
-          style={{
-            borderColor: 'var(--border)',
-            background: 'var(--surface)',
-            color: 'var(--fg)',
-          }}
-        />
-        <button
-          className="rounded-xl px-5 py-3 font-semibold text-white"
-          style={{ background: 'var(--accent)' }}
-        >
-          Rejoindre
-        </button>
-      </div>
+      {!identity ? (
+        <AuthPanel />
+      ) : (
+        <div className="flex flex-col items-center gap-5 w-full max-w-sm">
+          <p style={{ color: 'var(--muted)' }}>
+            Connecté comme <b style={{ color: 'var(--fg)' }}>{identity.displayName}</b>
+            {identity.kind === 'guest' && ' (invité)'} ·{' '}
+            <button onClick={logout} className="underline underline-offset-2">
+              changer
+            </button>
+          </p>
 
-      <button
-        className="rounded-full px-6 py-2 font-semibold"
-        style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-      >
-        Créer une salle
-      </button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <input
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              placeholder="Code de la salle"
+              maxLength={6}
+              className="flex-1 rounded-xl border px-4 py-3 text-center font-mono uppercase tracking-widest"
+              style={{
+                borderColor: 'var(--border)',
+                background: 'var(--surface)',
+                color: 'var(--fg)',
+              }}
+            />
+            <button
+              className="rounded-xl px-5 py-3 font-semibold text-white"
+              style={{ background: 'var(--accent)' }}
+            >
+              Rejoindre
+            </button>
+          </div>
+
+          <button
+            className="rounded-full px-6 py-2 font-semibold"
+            style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+          >
+            Créer une salle
+          </button>
+        </div>
+      )}
     </main>
   );
 }

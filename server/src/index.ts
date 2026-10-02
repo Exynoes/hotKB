@@ -5,12 +5,14 @@ import { Server } from 'socket.io';
 import { env } from './env.js';
 import { pool } from './db.js';
 import healthRouter from './routes/health.js';
+import authRouter from './routes/auth.js';
 
 const app = express();
 app.use(cors({ origin: env.corsOrigin }));
 app.use(express.json());
 
 app.use('/api/health', healthRouter);
+app.use('/api/auth', authRouter);
 
 const httpServer = createServer(app);
 
