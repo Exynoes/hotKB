@@ -46,14 +46,32 @@ npm run dev:client   # Interface sur :5173
 
 Le client redirige automatiquement `/api` et `/socket.io` vers le serveur (voir `client/vite.config.ts`).
 
+### Tests
+
+```bash
+npm run test -w server   # Vitest + Supertest (nécessite PostgreSQL, voir ci-dessus)
+npm run test -w client   # Vitest + Testing Library
+```
+
+Exécutés automatiquement en CI sur chaque push (voir `.github/workflows/ci.yml`).
+
+## Déploiement
+
+Le projet est déployé sur [Render](https://render.com) (plan gratuit) via le Blueprint `render.yaml` : un service web (build client + serveur, HTTPS automatique) et une base PostgreSQL managée. Voir `render.yaml` et l'ADR-001 (doc d'architecture) pour la justification du choix.
+
+En ligne : **https://hotkb.onrender.com**
+
 ## Documentation du projet
 
 - Cahier des charges : voir le document remis séparément.
 - Direction artistique / identité : artefact Claude « Identité HotKB ».
 - Architecture (modèle de données, machine à états, ADR temps réel) : artefact Claude « Architecture HotKB ».
+- [Matrice des exigences](docs/matrice-exigences.md) : état d'implémentation de chaque exigence du cahier des charges.
 
 ## Pile technique
 
 - **Frontend** : React, TypeScript, Tailwind CSS, React Router, Socket.IO client
 - **Backend** : Node.js, Express, Socket.IO, PostgreSQL (`pg`), JWT, bcrypt
 - **Temps réel** : WebSocket via Socket.IO (voir ADR-001 dans la doc d'architecture)
+- **Tests** : Vitest (client + serveur), Supertest, Testing Library
+- **CI/CD** : GitHub Actions (lint, tests, build) ; déploiement Render
