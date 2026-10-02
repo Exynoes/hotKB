@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/*
+  Palette HotKB — reprise de la direction artistique (direction-artistique.html).
+  Flamme (accent), braise (accent-2), miel (success), rouge vif (danger).
+*/
+:root {
+  --bg: #fbf5f1;
+  --surface: #ffffff;
+  --fg: #271613;
+  --muted: #8a6f68;
+  --border: #f0ded4;
+  --accent: #ff4f1f;
+  --accent-2: #ffb347;
+  --success: #ffc825;
+  --danger: #ff3b5c;
+
+  --font-display: 'Baloo 2', ui-rounded, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #1a100d;
+    --surface: #241715;
+    --fg: #fbf0ec;
+    --muted: #b89892;
+    --border: #3a2620;
+    --accent: #ff6a3d;
+    --accent-2: #ffcb66;
+    --success: #ffd454;
+    --danger: #ff5c7a;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #1a100d;
+  --surface: #241715;
+  --fg: #fbf0ec;
+  --muted: #b89892;
+  --border: #3a2620;
+  --accent: #ff6a3d;
+  --accent-2: #ffcb66;
+  --success: #ffd454;
+  --danger: #ff5c7a;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+#root {
+  min-height: 100svh;
+}

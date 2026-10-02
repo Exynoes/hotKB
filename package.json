@@ -1,0 +1,16 @@
+{
+  "name": "hotkb",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HotKB — courses de dactylographie en temps réel (checkpoint #1, Web V)",
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "build:client": "npm run build -w client",
+    "build:server": "npm run build -w server",
+    "build": "npm run build:client && npm run build:server",
+    "lint": "npm run lint -w client",
+    "migrate": "npm run migrate -w server"
+  }
+}
