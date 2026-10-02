@@ -3,6 +3,9 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 import { env } from './env.js';
 import { pool } from './db.js';
 import healthRouter from './routes/health.js';
@@ -10,12 +13,24 @@ import authRouter from './routes/auth.js';
 import { registerRoomHandlers } from './rooms/handlers.js';
 import type { AuthPayload } from './middleware/auth.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 const app = express();
 app.use(cors({ origin: env.corsOrigin }));
 app.use(express.json());
 
 app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
+
+// En production, le serveur sert aussi le build du client (même origine,
+// un seul service à déployer — voir render.yaml).
+const clientDist = join(__dirname, '..', '..', 'client', 'dist');
+if (env.nodeEnv === 'production' && existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get(/^\/(?!api|socket\.io).*/, (_req, res) => {
+    res.sendFile(join(clientDist, 'index.html'));
+  });
+}
 
 const httpServer = createServer(app);
 
