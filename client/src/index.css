@@ -70,3 +70,69 @@ h3 {
 #root {
   min-height: 100svh;
 }
+
+/* ---- Fond de flammes animées ---- */
+.flame-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+main {
+  position: relative;
+  z-index: 1;
+}
+.flame-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45vh;
+  background: linear-gradient(to top, color-mix(in srgb, var(--accent) 28%, transparent), transparent);
+  opacity: 0.55;
+  animation: glow 4s ease-in-out infinite alternate;
+}
+.flame {
+  position: absolute;
+  bottom: -14vh;
+  width: 34vw;
+  min-width: 220px;
+  height: 46vh;
+  border-radius: 50% 50% 45% 45% / 70% 70% 30% 30%;
+  filter: blur(34px);
+  opacity: 0.5;
+  transform-origin: 50% 100%;
+  animation: flicker 3.2s ease-in-out infinite alternate;
+}
+.flame-1 { left: -6vw;  background: var(--accent);   animation-duration: 3.1s; }
+.flame-2 { left: 22vw;  background: var(--accent-2); animation-duration: 2.6s; animation-delay: -1s; height: 54vh; }
+.flame-3 { left: 48vw;  background: var(--accent);   animation-duration: 3.6s; animation-delay: -2s; }
+.flame-4 { left: 72vw;  background: var(--success);  animation-duration: 2.9s; animation-delay: -0.5s; height: 50vh; }
+.ember {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 8px 2px var(--accent);
+  opacity: 0;
+  animation: rise linear infinite;
+}
+@keyframes flicker {
+  0%   { transform: scaleY(0.85) scaleX(1) skewX(-3deg); }
+  50%  { transform: scaleY(1.05) scaleX(0.92) skewX(2deg); }
+  100% { transform: scaleY(0.95) scaleX(1.06) skewX(-1deg); }
+}
+@keyframes glow {
+  from { opacity: 0.4; }
+  to   { opacity: 0.7; }
+}
+@keyframes rise {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: 0.9; }
+  100% { transform: translateY(-85vh) translateX(30px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flame, .flame-glow { animation: none; }
+  .ember { display: none; }
+}
