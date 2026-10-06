@@ -89,6 +89,7 @@ export default function AuthPanel() {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             placeholder={t('guestPlaceholder')}
+            minLength={3}
             maxLength={20}
             required
             className="rounded-xl border px-4 py-3"

@@ -5,6 +5,7 @@ import { roomParticipants, rooms as roomsTable } from '../schema.js';
 import { generateRoomCode } from './code.js';
 import type { AuthPayload } from '../middleware/auth.js';
 import { firstError, joinRoomSchema } from '../schemas.js';
+import { allowJoinAttempt } from './rateLimit.js';
 
 interface Participant {
   participantId: string;
@@ -95,6 +96,9 @@ export function registerRoomHandlers(io: Server, socket: Socket) {
 
   socket.on('room:join', async (payload: unknown, ack?: (res: unknown) => void) => {
     try {
+      if (!allowJoinAttempt(socket.handshake.address)) {
+        return ack?.({ ok: false, error: 'Trop de tentatives. Réessaie dans une minute.' });
+      }
       const parsed = joinRoomSchema.safeParse(payload);
       if (!parsed.success) return ack?.({ ok: false, error: firstError(parsed.error) });
       const { code } = parsed.data;

@@ -18,8 +18,8 @@ export const guestSchema = z.object({
   displayName: z
     .string()
     .trim()
-    .min(2, 'Le nom affiché doit contenir 2 à 20 caractères.')
-    .max(20, 'Le nom affiché doit contenir 2 à 20 caractères.'),
+    .min(3, 'Le pseudonyme doit contenir 3 à 20 caractères.')
+    .max(20, 'Le pseudonyme doit contenir 3 à 20 caractères.'),
 });
 
 /** Messages temps réel */
