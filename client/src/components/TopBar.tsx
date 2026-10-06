@@ -1,3 +1,5 @@
+'use client';
+
 import { useTheme } from '../lib/theme';
 import { useLang } from '../lib/i18n';
 

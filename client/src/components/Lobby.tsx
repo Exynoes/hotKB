@@ -1,3 +1,5 @@
+'use client';
+
 import type { LobbyState } from '../lib/room-types';
 import { useLang } from '../lib/i18n';
 

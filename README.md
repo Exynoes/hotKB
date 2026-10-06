@@ -8,16 +8,16 @@ Projet réalisé pour le cours **Web V — Paradigme de programmation fonctionne
 
 ```
 .
-├── client/   # React + TypeScript + Tailwind (Vite)
-├── server/   # Node + Express + Socket.IO + PostgreSQL
-└── migrations/ (dans server/) # schéma SQL
+├── client/   # Next.js (App Router) + React + TypeScript + Tailwind
+├── server/   # Express + Socket.IO + Drizzle ORM + PostgreSQL (héberge aussi Next.js)
+│   └── migrations/  # migrations SQL versionnées
 ```
 
 ## Démarrage local
 
 ### Prérequis
 
-- Node.js 20+
+- Node.js 22+
 - PostgreSQL (local ou distant)
 
 ### Installation
@@ -35,16 +35,19 @@ npm install
    npm run migrate
    ```
 
-### Lancer en développement
-
-Dans deux terminaux séparés :
+### Données de démonstration
 
 ```bash
-npm run dev:server   # API + WebSocket sur :4000
-npm run dev:client   # Interface sur :5173
+npm run seed   # corpus de textes (FR/EN), compte « demo » / « demo1234 » et historique de courses
 ```
 
-Le client redirige automatiquement `/api` et `/socket.io` vers le serveur (voir `client/vite.config.ts`).
+### Lancer en développement
+
+Un seul processus sert Next.js, l'API REST et Socket.IO (port 4000) :
+
+```bash
+npm run dev    # http://localhost:4000
+```
 
 ### Tests
 
@@ -70,8 +73,8 @@ En ligne : **https://hotkb.onrender.com**
 
 ## Pile technique
 
-- **Frontend** : React, TypeScript, Tailwind CSS, React Router, Socket.IO client
-- **Backend** : Node.js, Express, Socket.IO, PostgreSQL (`pg`), JWT, bcrypt
+- **Frontend** : Next.js (App Router), React, TypeScript strict, Tailwind CSS, Socket.IO client
+- **Backend** : Node.js, Express, Socket.IO, PostgreSQL avec Drizzle ORM, Zod, JWT, bcrypt, OAuth Discord/GitHub
 - **Temps réel** : WebSocket via Socket.IO (voir ADR-001 dans la doc d'architecture)
 - **Tests** : Vitest (client + serveur), Supertest, Testing Library
 - **CI/CD** : GitHub Actions (lint, tests, build) ; déploiement Render

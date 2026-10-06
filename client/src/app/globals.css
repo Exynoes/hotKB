@@ -67,7 +67,7 @@ h3 {
   font-family: var(--font-display);
 }
 
-#root {
+body {
   min-height: 100svh;
 }
 

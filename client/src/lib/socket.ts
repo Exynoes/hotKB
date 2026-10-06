@@ -2,8 +2,8 @@ import { io, type Socket } from 'socket.io-client';
 
 /**
  * Client Socket.IO partagé pour toute l'application.
- * En dev, Vite proxy /socket.io vers le serveur (voir vite.config.ts).
- * En prod, le client et le serveur sont servis depuis la même origine.
+ * Next.js et Socket.IO sont servis par le même processus (server/src/index.ts) :
+ * même origine en dev comme en production.
  */
 export const socket: Socket = io({
   autoConnect: false,

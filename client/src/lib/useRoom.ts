@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useState } from 'react';
 import { socket } from './socket';
 import type { LobbyState, RoomAck } from './room-types';

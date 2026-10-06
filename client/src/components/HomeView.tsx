@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 import AuthPanel from "../components/AuthPanel";
 import Lobby from "../components/Lobby";
@@ -7,9 +9,9 @@ import { useAuth } from "../lib/auth";
 import { useRoom } from "../lib/useRoom";
 import { useLang } from "../lib/i18n";
 
-export default function Home() {
+export default function HomeView() {
   const [code, setCode] = useState("");
-  const { identity, logout } = useAuth();
+  const { identity, logout, ready } = useAuth();
   const { room, myId, error, createRoom, joinRoom, startRace, leaveRoom } =
     useRoom();
   const { t } = useLang();
@@ -29,7 +31,7 @@ export default function Home() {
           </p>
         </div>
 
-        {!identity ? (
+        {!ready ? null : !identity ? (
           <AuthPanel />
         ) : room ? (
           <Lobby

@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState, type FormEvent } from 'react';
 import { authApi, ApiError } from '../lib/api';
 import { useAuth } from '../lib/auth';

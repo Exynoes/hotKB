@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 export type Lang = 'fr' | 'en';
@@ -73,26 +75,33 @@ const LangContext = createContext<{ lang: Lang; t: (key: TranslationKey) => stri
 );
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>(() => {
+  // Rendu serveur en français ; la préférence réelle est lue après le montage.
+  const [lang, setLang] = useState<Lang>('fr');
+
+  useEffect(() => {
+    let preferred: Lang = navigator.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === 'fr' || saved === 'en') return saved;
+      if (saved === 'fr' || saved === 'en') preferred = saved;
     } catch {
       // ignore
     }
-    return navigator.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
-  });
+    setLang(preferred);
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = lang;
+  }, [lang]);
+
+  const toggle = () => {
+    const next: Lang = lang === 'fr' ? 'en' : 'fr';
+    setLang(next);
     try {
-      localStorage.setItem(STORAGE_KEY, lang);
+      localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // stockage indisponible — la langue reste active pour la session en cours
     }
-  }, [lang]);
-
-  const toggle = () => setLang((l) => (l === 'fr' ? 'en' : 'fr'));
+  };
   const t = (key: TranslationKey) => dict[lang][key];
 
   return <LangContext.Provider value={{ lang, t, toggle }}>{children}</LangContext.Provider>;
