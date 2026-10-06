@@ -11,14 +11,16 @@ export default function TypingDemo() {
   const { t } = useLang();
   const text = t('typingDemo');
   return (
-    <p
-      className="typing-demo"
+    <div
       aria-hidden="true"
-      style={{ '--n': text.length } as CSSProperties}
+      className="rounded-xl px-6 py-4 max-w-full overflow-x-auto"
+      style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
     >
-      <span className="typing-base">{text}</span>
-      <span className="typing-done">{text}</span>
-      <span className="typing-caret" />
-    </p>
+      <p className="typing-demo" style={{ '--n': text.length } as CSSProperties}>
+        <span className="typing-base">{text}</span>
+        <span className="typing-done">{text}</span>
+        <span className="typing-caret" />
+      </p>
+    </div>
   );
 }

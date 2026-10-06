@@ -44,7 +44,10 @@ export default function HomeView() {
             onLeave={leaveRoom}
           />
         ) : (
-          <div className="flex flex-col items-center gap-5 w-full max-w-sm">
+          <div
+            className="flex flex-col items-center gap-5 w-full max-w-sm rounded-2xl p-6"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
             <p style={{ color: "var(--muted)" }}>
               {t("connectedAs")}{" "}
               <b style={{ color: "var(--fg)" }}>{identity.displayName}</b>

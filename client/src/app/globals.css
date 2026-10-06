@@ -222,7 +222,7 @@ main {
 .typing-demo {
   position: relative;
   display: inline-block;
-  margin-top: 0.75rem;
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 1.05rem;
   letter-spacing: 0.02em;
