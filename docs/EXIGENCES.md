@@ -47,7 +47,7 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | AUTH-03 | partiel | `server/src/rooms/handlers.ts`, `HomeView.tsx` | e2e | Invité refusé à la création de salle (interface et serveur), sans historique persistant. Avatar généré non fait |
 | AUTH-04 | non fait | — | — | Téléversement de photo de profil |
 | AUTH-05 | non fait | — | — | Modification du pseudonyme |
-| AUTH-06 | non fait | — | — | Page de profil et statistiques |
+| AUTH-06 | partiel | `server/src/routes/profile.ts`, `client/src/components/ProfileView.tsx` | `server/test/profile.test.ts`, `client/test/ProfileView.test.tsx`, e2e | Page `/profile` : meilleur/moyen MPM, précision, courses, victoires, courbe de progression. Sans photo ni pseudonyme éditable (AUTH-04/05) |
 
 ## Salles et visibilité
 
@@ -93,7 +93,8 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | BOT-01 à BOT-05 | non fait | Approche prévue dans `ARCHITECTURE.md` (moteur côté serveur, déterministe par graine) |
 | BONUS-01 à BONUS-04 | non fait | — |
 | RES-01 à RES-05 | non fait | Tables `race_result`, `personal_best`, `key_error_stat` déjà créées (migration 001) |
-| HIST-01, HIST-02 | non fait | — |
+| HIST-01 | partiel | Historique paginé (`GET /api/me/history`) affiché sur `/profile` ; se remplira quand la course sera jouable |
+| HIST-02 | non fait | Page de résultats détaillés d'une course |
 
 ## Internationalisation
 

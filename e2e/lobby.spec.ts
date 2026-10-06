@@ -54,3 +54,15 @@ test('la langue et le thème se changent et sont conservés (I18N-02, DES-05)', 
   expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe(after);
   await expect(page.getByRole('button', { name: 'Play as guest' })).toBeVisible();
 });
+
+test('le compte démo voit ses statistiques sur la page profil (AUTH-06, HIST-01)', async ({ browser }) => {
+  const page = await newPlayer(browser);
+  await page.getByRole('button', { name: 'Se connecter' }).first().click();
+  await page.getByPlaceholder("Nom d'utilisateur").fill('demo');
+  await page.getByPlaceholder('Mot de passe').fill('demo1234');
+  await page.getByRole('button', { name: 'Se connecter' }).last().click();
+  await page.getByRole('link', { name: 'Mon profil' }).click();
+  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page.getByText('Meilleur MPM')).toBeVisible();
+  await expect(page.getByRole('table')).toBeVisible();
+});

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import Link from "next/link";
 import AuthPanel from "../components/AuthPanel";
 import Lobby from "../components/Lobby";
 import TopBar from "../components/TopBar";
@@ -85,6 +86,12 @@ export default function HomeView() {
               >
                 {error}
               </p>
+            )}
+
+            {identity.kind === "user" && (
+              <Link href="/profile" className="underline underline-offset-2 font-semibold">
+                {t("myProfile")}
+              </Link>
             )}
 
             {identity.kind === "guest" ? (
