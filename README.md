@@ -69,7 +69,9 @@ En ligne : **https://hotkb.onrender.com**
 - Cahier des charges : voir le document remis séparément.
 - Direction artistique / identité : artefact Claude « Identité HotKB ».
 - Architecture (modèle de données, machine à états, ADR temps réel) : artefact Claude « Architecture HotKB ».
-- [Matrice des exigences](docs/matrice-exigences.md) : état d'implémentation de chaque exigence du cahier des charges.
+- [Matrice de traçabilité](docs/EXIGENCES.md) : statut honnête de chaque exigence de l énoncé.
+- [Architecture](docs/ARCHITECTURE.md) : modèle de données, machine à états, ADR temps réel, approche des bots.
+- [Démarche créative](docs/DEMARCHE-CREATIVE.md) : nom, logo, direction artistique.
 
 ## Pile technique
 
