@@ -33,8 +33,8 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 |---|---|---|---|---|
 | DES-01 | partiel | `docs/DEMARCHE-CREATIVE.md` | — | Nom « HotKB » trouvé par l'auteur (patate chaude + clavier chaud + initiales de *keyboard*). Vérification d'originalité faite après coup : « Hot Keyboard » (logiciel de macros Windows) est proche mais d'une autre catégorie ; avis de l'enseignant demandé |
 | DES-02 | complet | `docs/DEMARCHE-CREATIVE.md`, `docs/demarche-creative/`, `client/public/logo.png` | — | Concept, croquis et assemblage de l'auteur ; flamme issue de la bibliothèque Canva et touches K/B rendues avec l'aide d'un outil d'IA (détaillé dans la démarche créative). L'enseignant a confirmé qu'un croquis de l'auteur suffit |
-| DES-03 | partiel | `docs/DEMARCHE-CREATIVE.md` | — | Palette et typographies documentées ; moodboard (3 à 5 références) à fournir par l'auteur |
-| DES-04 | partiel | `client/src/components/`, `FlameBackground.tsx` | — | Palette chaude personnalisée, aucun composant shadcn, aucun emoji en guise d'icône. Piste de progression (élément signature) non faite |
+| DES-03 | partiel | `docs/DEMARCHE-CREATIVE.md` | — | Palette, typographies et moodboard de 4 références documentés ; il reste à ajouter les commentaires personnels de l'auteur sur chaque référence |
+| DES-04 | partiel | `RaceTrack.tsx`, `TypingDemo.tsx`, `Lobby.tsx`, `FlameBackground.tsx` | e2e | Palette chaude personnalisée, aucun composant shadcn, aucun emoji en guise d'icône. Piste de progression en élément signature : version animée sur l'accueil ; reliée aux vraies courses plus tard |
 | DES-05 | complet | `client/src/app/layout.tsx`, `client/src/lib/theme.tsx` | e2e | Sélecteur, préférence système par défaut, script avant rendu : aucun flash du mauvais thème |
 | DES-06 | partiel | `client/src/components/` | vérifié à 360 px (pas de débordement horizontal) | Message « clavier physique » sur mobile à faire avec la course |
 

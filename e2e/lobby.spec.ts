@@ -21,7 +21,7 @@ test('un compte crée une salle, un invité la rejoint par code (TEST-03, SALLE-
   await host.getByRole('button', { name: 'Créer mon compte' }).click();
   await host.getByRole('button', { name: 'Créer une salle', exact: true }).click();
   await expect(host.getByText('CODE DE LA SALLE')).toBeVisible();
-  const code = (await host.locator('p.font-mono.font-bold').innerText()).trim();
+  const code = (await host.locator('[data-code]').getAttribute('data-code')) ?? '';
   expect(code).toMatch(/^[A-HJ-NP-Z2-9]{6}$/); // 6 caractères, sans 0/O/1/I
 
   // Invité : ne peut pas créer de salle (AUTH-03) mais rejoint par code

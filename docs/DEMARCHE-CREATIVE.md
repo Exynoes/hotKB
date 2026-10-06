@@ -37,7 +37,16 @@ Aucun. « HotKB » est le seul nom auquel l'auteur a pensé : l'idée est venue 
 
 ### Moodboard (3 à 5 références)
 
-`À COMPLÉTER` : images/liens choisis par l'auteur, avec une phrase sur ce qui est retenu de chacune.
+Quatre références, choisies avec l'auteur (Monkeytype et l'envie d'un univers de « flammes » viennent de l'auteur ; TypeRacer et Kahoot sont les références citées par l'énoncé du travail) :
+
+| Référence | Ce qui en est retenu | Où on le voit dans HotKB |
+|---|---|---|
+| **Monkeytype** (monkeytype.com) | Zone de frappe très lisible, retour immédiat sur chaque lettre, curseur clignotant, choix de thèmes | Aperçu de frappe animé sous le titre (`TypingDemo.tsx`) ; thèmes clair et sombre |
+| **Flamme de série de Duolingo** | Une flamme simple, arrondie et chaude, symbole de l'effort et de la progression ; ton amical et ludique | Logo en forme de flamme, palette flamme / braise / miel, braises et flammes animées en arrière-plan (`FlameBackground.tsx`) |
+| **TypeRacer** (typeracer.com) | La piste de course où chaque joueur avance en direct | **Élément signature** : la piste de progression avec coureurs, traînée de flamme et ligne d'arrivée (`RaceTrack.tsx`) |
+| **Kahoot** (kahoot.com) | Salle d'attente colorée, code de salle très visible, ambiance de jeu entre amis | Code de salle en grosses tuiles dans le lobby (`Lobby.tsx`) |
+
+`À COMPLÉTER` par l'auteur : une phrase, dans ses mots, sur ce qu'il aime de chaque référence (et ajout éventuel d'une 5e).
 
 ### Palette
 

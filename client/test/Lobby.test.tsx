@@ -29,7 +29,7 @@ describe('Lobby', () => {
   it('affiche le code de la salle et les participants', () => {
     renderLobby({ room: baseRoom, myId: 'p2', onStart: vi.fn(), onLeave: vi.fn() });
 
-    expect(screen.getByText('ABCDE')).toBeInTheDocument();
+    expect(screen.getByLabelText('ABCDE')).toBeInTheDocument();
     expect(screen.getByText('Camille')).toBeInTheDocument();
     expect(screen.getByText(/Nathan/)).toBeInTheDocument();
     expect(screen.getByText('HÔTE')).toBeInTheDocument();

@@ -4,6 +4,8 @@ import { useState } from "react";
 import AuthPanel from "../components/AuthPanel";
 import Lobby from "../components/Lobby";
 import TopBar from "../components/TopBar";
+import RaceTrack from '../components/RaceTrack';
+import TypingDemo from '../components/TypingDemo';
 import FlameBackground from "../components/FlameBackground";
 import { useAuth } from "../lib/auth";
 import { useRoom } from "../lib/useRoom";
@@ -29,7 +31,10 @@ export default function HomeView() {
           <p className="max-w-md" style={{ color: "var(--muted)" }}>
             {t("tagline")}
           </p>
+          <TypingDemo />
         </div>
+
+        <RaceTrack />
 
         {!ready ? null : !identity ? (
           <AuthPanel />

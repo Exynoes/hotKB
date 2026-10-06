@@ -136,3 +136,137 @@ main {
   .flame, .flame-glow { animation: none; }
   .ember { display: none; }
 }
+
+/* ---- Piste de progression (élément signature, inspirée de TypeRacer) ---- */
+.race-track {
+  position: relative;
+  z-index: 1;
+  width: min(30rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.lane {
+  position: relative;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.lane-label {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.finish {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 0.9rem;
+  background: repeating-conic-gradient(var(--fg) 0% 25%, transparent 0% 50%) 0 0 / 0.45rem 0.45rem;
+  opacity: 0.35;
+}
+.runner {
+  position: absolute;
+  top: 50%;
+  left: var(--rest);
+  transform: translateY(-50%);
+  width: 1.9rem;
+  height: 1.9rem;
+  animation: run linear infinite alternate;
+}
+.avatar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--runner);
+  color: #2a1206;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.85rem;
+  box-shadow: 0 0 0 2px var(--surface);
+}
+.trail {
+  position: absolute;
+  right: 70%;
+  top: 50%;
+  width: 3.2rem;
+  height: 1.1rem;
+  transform: translateY(-50%);
+  border-radius: 9999px 0 0 9999px;
+  background: linear-gradient(to left, var(--runner), transparent);
+  filter: blur(3px);
+  opacity: 0.8;
+}
+@keyframes run {
+  from { left: 0.4rem; }
+  to   { left: calc(100% - 2.4rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .runner { animation: none; }
+}
+
+/* ---- Aperçu de frappe (inspiré de Monkeytype) ---- */
+.typing-demo {
+  position: relative;
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.typing-base { color: var(--muted); opacity: 0.55; }
+.typing-done {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  width: 0;
+  color: var(--accent);
+  animation: typing 5s steps(var(--n)) infinite;
+}
+.typing-caret {
+  position: absolute;
+  top: 0.1em;
+  bottom: 0.1em;
+  width: 2px;
+  left: 0;
+  background: var(--accent-2);
+  animation: caret 5s steps(var(--n)) infinite, blink 1s step-end infinite;
+}
+@keyframes typing { 0% { width: 0; } 70%, 100% { width: calc(var(--n) * 1ch); } }
+@keyframes caret  { 0% { left: 0; } 70%, 100% { left: calc(var(--n) * 1ch); } }
+@keyframes blink  { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .typing-done { animation: none; width: calc(var(--n) * 1ch * 0.55); }
+  .typing-caret { animation: none; left: calc(var(--n) * 1ch * 0.55); }
+}
+
+/* ---- Code de salle en tuiles (inspiré de Kahoot) ---- */
+.code-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.8rem;
+  border-radius: 0.6rem;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.5rem;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 60%, black);
+}

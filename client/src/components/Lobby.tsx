@@ -27,7 +27,13 @@ export default function Lobby({
           <p className="text-xs font-mono tracking-widest" style={{ color: 'var(--muted)' }}>
             {t('roomCodeLabel')}
           </p>
-          <p className="text-3xl font-mono font-bold tracking-[0.2em]">{room.code}</p>
+          <div className="flex gap-1.5 mt-1" data-code={room.code} aria-label={room.code} role="img">
+            {[...room.code].map((c, i) => (
+              <span key={i} className="code-tile" aria-hidden="true">
+                {c}
+              </span>
+            ))}
+          </div>
         </div>
         <button onClick={onLeave} className="text-sm underline underline-offset-2">
           {t('leave')}
