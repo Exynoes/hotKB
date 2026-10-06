@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { authApi, ApiError } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { useLang } from '../lib/i18n';
@@ -6,8 +6,8 @@ import { useLang } from '../lib/i18n';
 type Tab = 'guest' | 'login' | 'register';
 
 /**
- * AUTH-1 (compte local) et AUTH-3 (invité) : seuls les deux parcours
- * prioritaires pour le checkpoint #1. OAuth (AUTH-2) reste hors scope ici.
+ * AUTH-01 : compte local, invité et OAuth (Discord / GitHub, affichés seulement
+ * si le serveur les a configurés).
  */
 export default function AuthPanel() {
   const [tab, setTab] = useState<Tab>('guest');
@@ -16,7 +16,15 @@ export default function AuthPanel() {
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { setIdentity } = useAuth();
+  const { setIdentity, oauthError } = useAuth();
+  const [providers, setProviders] = useState<string[]>([]);
+
+  useEffect(() => {
+    authApi
+      .providers()
+      .then((r) => setProviders(r.providers))
+      .catch(() => setProviders([]));
+  }, []);
   const { t } = useLang();
 
   async function handleSubmit(e: FormEvent) {
@@ -108,9 +116,9 @@ export default function AuthPanel() {
           </>
         )}
 
-        {error && (
+        {(error || oauthError) && (
           <p className="text-sm font-medium" style={{ color: 'var(--danger)' }}>
-            {error}
+            {error ?? t('oauthFailed')}
           </p>
         )}
 
@@ -129,6 +137,24 @@ export default function AuthPanel() {
                 : t('submitRegister')}
         </button>
       </form>
+
+      {providers.length > 0 && (
+        <div className="mt-5 flex flex-col gap-2">
+          <p className="text-xs text-center" style={{ color: 'var(--muted)' }}>
+            {t('orDivider')}
+          </p>
+          {providers.map((p) => (
+            <a
+              key={p}
+              href={`/api/auth/oauth/${p}`}
+              className="rounded-xl py-3 text-center font-semibold"
+              style={{ border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--fg)' }}
+            >
+              {t('continueWith')} {p === 'github' ? 'GitHub' : 'Discord'}
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

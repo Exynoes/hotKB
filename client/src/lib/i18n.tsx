@@ -30,6 +30,9 @@ const dict = {
     waitingForPlayers: "En attente d'au moins un·e autre joueur·euse pour démarrer...",
     startRace: 'Démarrer la course',
     genericError: 'Connexion au serveur impossible.',
+    continueWith: 'Continuer avec',
+    orDivider: 'ou',
+    oauthFailed: 'La connexion externe a échoué. Réessaie.',
   },
   en: {
     tagline:
@@ -57,6 +60,9 @@ const dict = {
     waitingForPlayers: 'Waiting for at least one more player to start...',
     startRace: 'Start the race',
     genericError: 'Could not reach the server.',
+    continueWith: 'Continue with',
+    orDivider: 'or',
+    oauthFailed: 'External sign-in failed. Please try again.',
   },
 } as const;
 

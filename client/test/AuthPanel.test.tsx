@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AuthPanel from '../src/components/AuthPanel';
 import { AuthProvider } from '../src/lib/auth';
@@ -39,4 +39,42 @@ describe('AuthPanel', () => {
 
     expect(screen.getByRole('button', { name: 'Créer mon compte' })).toBeInTheDocument();
   });
+
+  it('affiche les boutons OAuth des fournisseurs configurés (AUTH-01)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: true, json: async () => ({ providers: ['github', 'discord'] }) }),
+    );
+    renderPanel();
+    expect(await screen.findByText('Continuer avec GitHub')).toHaveAttribute(
+      'href',
+      '/api/auth/oauth/github',
+    );
+    expect(screen.getByText('Continuer avec Discord')).toBeInTheDocument();
+  });
+
+  it("n'affiche aucun bouton OAuth si aucun fournisseur n'est configuré", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ providers: [] }) });
+    vi.stubGlobal('fetch', fetchMock);
+    renderPanel();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    expect(screen.queryByText(/Continuer avec/)).not.toBeInTheDocument();
+  });
+
+  it('connecte l’utilisateur au retour OAuth (fragment #token)', () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ providers: [] }) }));
+    window.location.hash = '#token=abc&name=camille';
+    renderPanel();
+    expect(JSON.parse(localStorage.getItem('hotkb:identity')!)).toMatchObject({
+      token: 'abc',
+      displayName: 'camille',
+      kind: 'user',
+    });
+    expect(window.location.hash).toBe('');
+  });
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  localStorage.clear();
 });

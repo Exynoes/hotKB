@@ -36,6 +36,7 @@ export interface AuthResponse {
 }
 
 export const authApi = {
+  providers: () => request<{ providers: string[] }>('/auth/oauth/providers'),
   register: (username: string, password: string) =>
     request<AuthResponse>('/auth/register', {
       method: 'POST',

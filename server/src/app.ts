@@ -6,6 +6,7 @@ import { existsSync } from 'fs';
 import { env } from './env.js';
 import healthRouter from './routes/health.js';
 import authRouter from './routes/auth.js';
+import oauthRouter from './routes/oauth.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -20,6 +21,7 @@ export function createApp() {
 
   app.use('/api/health', healthRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api/auth/oauth', oauthRouter);
 
   // En production, le serveur sert aussi le build du client (même origine,
   // un seul service à déployer — voir render.yaml).

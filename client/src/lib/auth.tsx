@@ -8,6 +8,7 @@ interface Identity {
 }
 
 interface AuthContextValue {
+  oauthError: boolean;
   identity: Identity | null;
   setIdentity: (identity: Identity | null) => void;
   logout: () => void;
@@ -16,8 +17,30 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 const STORAGE_KEY = 'hotkb:identity';
 
+/** Lit le fragment laissé par le retour OAuth (#token=...&name=... ou #oauth_error=...). */
+function readOAuthFragment(): { identity: Identity | null; error: boolean } {
+  if (typeof window === 'undefined' || !window.location.hash) return { identity: null, error: false };
+  const params = new URLSearchParams(window.location.hash.slice(1));
+  const token = params.get('token');
+  const name = params.get('name');
+  const error = params.has('oauth_error');
+  if (token || error) {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+  return { identity: token && name ? { token, kind: 'user', displayName: name } : null, error };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [fragment] = useState(readOAuthFragment);
   const [identity, setIdentityState] = useState<Identity | null>(() => {
+    if (fragment.identity) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(fragment.identity));
+      } catch {
+        // stockage indisponible — on garde l'identité en mémoire
+      }
+      return fragment.identity;
+    }
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? (JSON.parse(raw) as Identity) : null;
@@ -53,7 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [identity]);
 
-  const value = useMemo(() => ({ identity, setIdentity, logout }), [identity, setIdentity, logout]);
+  const value = useMemo(
+    () => ({ identity, setIdentity, logout, oauthError: fragment.error }),
+    [identity, setIdentity, logout, fragment.error],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

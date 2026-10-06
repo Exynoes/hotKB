@@ -23,6 +23,7 @@ export const users = pgTable('user', {
   username: varchar('username', { length: 32 }).notNull().unique(),
   passwordHash: text('password_hash'),
   authProvider: varchar('auth_provider', { length: 32 }).notNull().default('local'),
+  providerId: text('provider_id'),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
