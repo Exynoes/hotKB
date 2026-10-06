@@ -17,6 +17,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint -w client
+      - run: npm run typecheck -w client
       - run: npm run test -w client
       - run: npm run build -w client
 

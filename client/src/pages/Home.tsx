@@ -80,16 +80,22 @@ export default function Home() {
               </p>
             )}
 
-            <button
-              onClick={createRoom}
-              className="rounded-full px-6 py-2 font-semibold"
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              {t("createRoom")}
-            </button>
+            {identity.kind === "guest" ? (
+              <p className="text-sm" style={{ color: "var(--muted)" }}>
+                {t("guestCannotCreate")}
+              </p>
+            ) : (
+              <button
+                onClick={createRoom}
+                className="rounded-full px-6 py-2 font-semibold"
+                style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                {t("createRoom")}
+              </button>
+            )}
           </div>
         )}
       </main>

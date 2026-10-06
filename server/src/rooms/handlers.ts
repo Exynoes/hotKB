@@ -43,6 +43,11 @@ export function registerRoomHandlers(io: Server, socket: Socket) {
   const auth = socket.data.auth as AuthPayload;
 
   socket.on('room:create', async (ack?: (res: unknown) => void) => {
+    // AUTH-03 : un invité ne peut pas créer de salle (garanti côté serveur).
+    if (auth.kind !== 'user') {
+      ack?.({ ok: false, error: 'Les invités ne peuvent pas créer de salle. Connecte-toi pour en créer une.' });
+      return;
+    }
     try {
       let code = generateRoomCode();
       // Évite une collision improbable avec une salle active.
@@ -59,7 +64,7 @@ export function registerRoomHandlers(io: Server, socket: Socket) {
       const participantResult = await pool.query(
         `INSERT INTO room_participant (room_id, user_id, guest_id)
          VALUES ($1, $2, $3) RETURNING id`,
-        [roomId, auth.kind === 'user' ? auth.sub : null, auth.kind === 'guest' ? auth.sub : null],
+        [roomId, auth.sub, null], // l'hôte est toujours un utilisateur (AUTH-03)
       );
       const participantId = participantResult.rows[0].id;
 
