@@ -22,7 +22,7 @@ export default function HomeView() {
   return (
     <>
       <FlameBackground />
-      <main className="min-h-screen flex flex-col items-center justify-center gap-8 px-4 py-12 text-center">
+      <main className="min-h-screen flex flex-col items-center justify-center gap-6 px-4 py-12 text-center">
         <TopBar />
         <div className="flex flex-col items-center gap-2">
           <img src="/logo.png" width="96" height="96" alt="Logo HotKB" />
@@ -32,10 +32,7 @@ export default function HomeView() {
           <p className="max-w-md" style={{ color: "var(--muted)" }}>
             {t("tagline")}
           </p>
-          <TypingDemo />
         </div>
-
-        <RaceTrack />
 
         {!ready ? null : !identity ? (
           <AuthPanel />
@@ -57,13 +54,21 @@ export default function HomeView() {
               </button>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <form
+              className="flex flex-col gap-3 w-full"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (code) joinRoom(code);
+              }}
+            >
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 placeholder={t("roomCodePlaceholder")}
+                aria-label={t("roomCodePlaceholder")}
                 maxLength={6}
-                className="flex-1 rounded-xl border px-4 py-3 text-center font-mono uppercase tracking-widest"
+                autoComplete="off"
+                className="w-full rounded-2xl border-2 px-4 py-5 text-center text-3xl font-mono font-bold uppercase tracking-[0.3em] placeholder:text-base placeholder:font-sans placeholder:font-semibold placeholder:tracking-normal outline-none focus:border-[var(--accent)]"
                 style={{
                   borderColor: "var(--border)",
                   background: "var(--surface)",
@@ -71,13 +76,13 @@ export default function HomeView() {
                 }}
               />
               <button
-                onClick={() => code && joinRoom(code)}
-                className="rounded-xl px-5 py-3 font-semibold text-white"
+                type="submit"
+                className="w-full rounded-2xl px-5 py-4 text-xl font-extrabold text-white"
                 style={{ background: "var(--accent)" }}
               >
                 {t("join")}
               </button>
-            </div>
+            </form>
 
             {error && (
               <p
@@ -112,6 +117,11 @@ export default function HomeView() {
             )}
           </div>
         )}
+
+        <div className="flex flex-col items-center gap-6 w-full max-w-xl mt-4">
+          <TypingDemo />
+          <RaceTrack />
+        </div>
       </main>
     </>
   );
