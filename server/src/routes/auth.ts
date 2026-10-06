@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { pool } from '../db.js';
+import { eq } from 'drizzle-orm';
+import { db } from '../db.js';
+import { guestSessions, users } from '../schema.js';
 import { env } from '../env.js';
 import { requireAuth } from '../middleware/auth.js';
 import { firstError, guestSchema, loginSchema, registerSchema } from '../schemas.js';
@@ -20,19 +22,16 @@ router.post('/register', async (req, res) => {
   if (!parsed.success) return res.status(400).json({ error: firstError(parsed.error) });
   const { username, password } = parsed.data;
 
-  const existing = await pool.query('SELECT id FROM "user" WHERE username = $1', [username]);
-  if (existing.rowCount && existing.rowCount > 0) {
+  const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.username, username));
+  if (existing) {
     return res.status(409).json({ error: "Ce nom d'utilisateur est déjà pris." });
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const result = await pool.query(
-    `INSERT INTO "user" (username, password_hash, auth_provider)
-     VALUES ($1, $2, 'local')
-     RETURNING id, username, created_at`,
-    [username, passwordHash],
-  );
-  const user = result.rows[0];
+  const [user] = await db
+    .insert(users)
+    .values({ username, passwordHash, authProvider: 'local' })
+    .returning({ id: users.id, username: users.username });
 
   const token = signToken({ sub: user.id, kind: 'user', username: user.username });
   res.status(201).json({ token, user: { id: user.id, username: user.username } });
@@ -48,16 +47,15 @@ router.post('/login', async (req, res) => {
   }
   const { username, password } = parsed.data;
 
-  const result = await pool.query(
-    'SELECT id, username, password_hash FROM "user" WHERE username = $1',
-    [username],
-  );
-  const user = result.rows[0];
-  if (!user || !user.password_hash) {
+  const [user] = await db
+    .select({ id: users.id, username: users.username, passwordHash: users.passwordHash })
+    .from(users)
+    .where(eq(users.username, username));
+  if (!user || !user.passwordHash) {
     return res.status(401).json({ error: 'Identifiants invalides.' });
   }
 
-  const valid = await bcrypt.compare(password, user.password_hash);
+  const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) {
     return res.status(401).json({ error: 'Identifiants invalides.' });
   }
@@ -74,14 +72,13 @@ router.post('/guest', async (req, res) => {
   if (!parsed.success) return res.status(400).json({ error: firstError(parsed.error) });
   const { displayName } = parsed.data;
 
-  const result = await pool.query(
-    `INSERT INTO guest_session (display_name) VALUES ($1) RETURNING id, display_name, created_at`,
-    [displayName],
-  );
-  const guest = result.rows[0];
+  const [guest] = await db
+    .insert(guestSessions)
+    .values({ displayName })
+    .returning({ id: guestSessions.id, displayName: guestSessions.displayName });
 
-  const token = signToken({ sub: guest.id, kind: 'guest', username: guest.display_name });
-  res.status(201).json({ token, guest: { id: guest.id, displayName: guest.display_name } });
+  const token = signToken({ sub: guest.id, kind: 'guest', username: guest.displayName });
+  res.status(201).json({ token, guest: { id: guest.id, displayName: guest.displayName } });
 });
 
 /**

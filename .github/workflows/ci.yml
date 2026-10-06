@@ -49,5 +49,6 @@ jobs:
       - run: npm ci
       - run: npm run typecheck -w server
       - run: npm run migrate -w server
+      - run: npm run seed -w server
       - run: npm run test -w server
       - run: npm run build -w server

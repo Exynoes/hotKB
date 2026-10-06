@@ -1,5 +1,7 @@
 import type { Server, Socket } from 'socket.io';
-import { pool } from '../db.js';
+import { eq } from 'drizzle-orm';
+import { db } from '../db.js';
+import { roomParticipants, rooms as roomsTable } from '../schema.js';
 import { generateRoomCode } from './code.js';
 import type { AuthPayload } from '../middleware/auth.js';
 import { firstError, joinRoomSchema } from '../schemas.js';
@@ -54,20 +56,18 @@ export function registerRoomHandlers(io: Server, socket: Socket) {
       // Évite une collision improbable avec une salle active.
       while (rooms.has(code)) code = generateRoomCode();
 
-      const userId = auth.kind === 'user' ? auth.sub : null;
-      const result = await pool.query(
-        `INSERT INTO room (code, visibility, host_user_id, status)
-         VALUES ($1, 'open', $2, 'en_attente') RETURNING id`,
-        [code, userId],
-      );
-      const roomId = result.rows[0].id;
+      const [roomRow] = await db
+        .insert(roomsTable)
+        .values({ code, visibility: 'open', hostUserId: auth.sub, status: 'en_attente' })
+        .returning({ id: roomsTable.id });
+      const roomId = roomRow.id;
 
-      const participantResult = await pool.query(
-        `INSERT INTO room_participant (room_id, user_id, guest_id)
-         VALUES ($1, $2, $3) RETURNING id`,
-        [roomId, auth.sub, null], // l'hôte est toujours un utilisateur (AUTH-03)
-      );
-      const participantId = participantResult.rows[0].id;
+      // l'hôte est toujours un utilisateur (AUTH-03)
+      const [participantRow] = await db
+        .insert(roomParticipants)
+        .values({ roomId, userId: auth.sub })
+        .returning({ id: roomParticipants.id });
+      const participantId = participantRow.id;
 
       const room: RoomState = {
         roomId,
@@ -106,12 +106,15 @@ export function registerRoomHandlers(io: Server, socket: Socket) {
         return ack?.({ ok: false, error: 'La course est déjà commencée.' });
       }
 
-      const participantResult = await pool.query(
-        `INSERT INTO room_participant (room_id, user_id, guest_id)
-         VALUES ($1, $2, $3) RETURNING id`,
-        [room.roomId, auth.kind === 'user' ? auth.sub : null, auth.kind === 'guest' ? auth.sub : null],
-      );
-      const participantId = participantResult.rows[0].id;
+      const [participantRow] = await db
+        .insert(roomParticipants)
+        .values({
+          roomId: room.roomId,
+          userId: auth.kind === 'user' ? auth.sub : null,
+          guestId: auth.kind === 'guest' ? auth.sub : null,
+        })
+        .returning({ id: roomParticipants.id });
+      const participantId = participantRow.id;
 
       room.participants.set(socket.id, {
         participantId,
@@ -143,7 +146,7 @@ export function registerRoomHandlers(io: Server, socket: Socket) {
     }
 
     room.status = 'en_course';
-    await pool.query('UPDATE room SET status = $1 WHERE id = $2', ['en_course', room.roomId]);
+    await db.update(roomsTable).set({ status: 'en_course' }).where(eq(roomsTable.id, room.roomId));
     ack?.({ ok: true });
     broadcast(io, room);
   });
