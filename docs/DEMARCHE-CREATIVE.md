@@ -13,10 +13,12 @@
 
 ## 2. Logo (DES-02)
 
-- Concept (de l'auteur) : une flamme qui enveloppe deux touches de clavier, K et B, posées en désordre.
-- Croquis original de l'auteur : [`demarche-creative/croquis-logo.png`](demarche-creative/croquis-logo.png)
-- Mise au propre : `À COMPLÉTER` (outil utilisé, étapes, par l'auteur à partir du croquis).
-- Utilisation : dans l'application (page d'accueil) et comme favicon.
+- **Concept (de l'auteur)** : une flamme qui enveloppe deux touches de clavier, K et B, posées en désordre.
+- **Croquis original de l'auteur** : [`demarche-creative/croquis-logo.png`](demarche-creative/croquis-logo.png) — la flamme (trait rouge) entoure deux touches (K et B) dessinées à la main.
+- **Logo final** : [`demarche-creative/logo-final.png`](demarche-creative/logo-final.png), assemblé dans Canva par l'auteur à partir de son croquis.
+- **Transparence sur la fabrication** : l'idée, la composition et le croquis sont de l'auteur. Pour la mise au propre, la flamme est un élément de la bibliothèque de Canva, et les touches K/B ont été rendues numériquement à l'aide d'un outil d'IA (Claude) en suivant le concept du croquis, puis placées et assemblées par l'auteur dans Canva.
+- **Validation** : l'enseignant a indiqué à l'auteur qu'un logo accompagné d'un croquis de l'auteur est accepté.
+- **Utilisation** : dans l'application (page d'accueil, `client/public/logo.png`) et comme favicon (`client/public/favicon.png`).
 
 ## 3. Direction artistique (DES-03)
 
