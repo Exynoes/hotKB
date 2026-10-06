@@ -7,9 +7,22 @@
 
 **Nom retenu : HotKB**
 
-- Origine : « Hot » (chaud, en anglais) pour l'ambiance d'une course qui chauffe, et « KB » pour *keyboard* (clavier). Trouvé par l'auteur, sans référence.
-- Noms envisagés : `À COMPLÉTER` (liste des autres noms essayés et pourquoi ils ont été écartés).
-- Vérification d'originalité : `À COMPLÉTER` (recherche web/App Store, résultats).
+### Origine du nom (trouvé par l'auteur, sans IA ni référence)
+
+L'idée vient du jeu de la **patate chaude** : on ne peut pas garder l'objet, il faut s'en débarrasser vite. Dans une course de frappe, c'est la même urgence : le **clavier est « chaud »** et il faut taper vite. « **Hot** » (chaud) exprime cette urgence, et « **KB** » est l'abréviation de *keyboard* (clavier). Le nom a aussi guidé toute l'identité : palette de couleurs chaudes (flamme, braise, miel) et un logo en forme de flamme autour de deux touches du clavier.
+
+### Vérification d'originalité (effectuée le 6 octobre 2026, après le choix du nom)
+
+Le nom a d'abord été choisi sans recherche. La vérification a été faite ensuite avec une recherche Google sur « HotKB » :
+
+- **Hot Keyboard** (hot-keyboard.com) : logiciel Windows de macros et d'automatisation (insertion de texte, enregistrement de frappes). Nom proche, mais produit d'une **autre catégorie** (utilitaire d'automatisation de bureau, pas un jeu).
+- **Hot Virtual Keyboard** (hotvirtualkeyboard.com) : clavier virtuel à l'écran. Autre catégorie également.
+- Aucun produit nommé exactement « HotKB » n'est apparu dans les résultats consultés, ni aucun jeu de course de frappe.
+- Constat honnête : la ressemblance avec « Hot Keyboard » est réelle. L'auteur a soumis la question à l'enseignant : `À COMPLÉTER` (réponse de l'enseignant).
+
+### Autres noms envisagés
+
+`À COMPLÉTER` (autres noms envisagés avant HotKB, s'il y en a eu).
 
 ## 2. Logo (DES-02)
 
