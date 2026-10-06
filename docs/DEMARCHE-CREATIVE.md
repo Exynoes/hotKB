@@ -22,7 +22,7 @@ Le nom a d'abord été choisi sans recherche. La vérification a été faite ens
 
 ### Autres noms envisagés
 
-`À COMPLÉTER` (autres noms envisagés avant HotKB, s'il y en a eu).
+Aucun. « HotKB » est le seul nom auquel l'auteur a pensé : l'idée est venue directement du jeu de la patate chaude et du clavier « chaud », sans liste de candidats.
 
 ## 2. Logo (DES-02)
 
