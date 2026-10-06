@@ -18,7 +18,7 @@ Le nom a d'abord été choisi sans recherche. La vérification a été faite ens
 - **Hot Keyboard** (hot-keyboard.com) : logiciel Windows de macros et d'automatisation (insertion de texte, enregistrement de frappes). Nom proche, mais produit d'une **autre catégorie** (utilitaire d'automatisation de bureau, pas un jeu).
 - **Hot Virtual Keyboard** (hotvirtualkeyboard.com) : clavier virtuel à l'écran. Autre catégorie également.
 - Aucun produit nommé exactement « HotKB » n'est apparu dans les résultats consultés, ni aucun jeu de course de frappe.
-- Constat honnête : la ressemblance avec « Hot Keyboard » est réelle. L'auteur a soumis la question à l'enseignant : `À COMPLÉTER` (réponse de l'enseignant).
+- Constat honnête : la ressemblance avec « Hot Keyboard » est réelle. L'auteur a soumis la question à l'enseignant le 6 octobre 2026 (Discord) ; réponse de l'enseignant : « Pas de problème, ça me dérange pas s'il y a déjà un site avec le même nom. » Le nom est donc conservé.
 
 ### Autres noms envisagés
 
