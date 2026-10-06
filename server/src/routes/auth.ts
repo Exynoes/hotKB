@@ -4,10 +4,9 @@ import jwt from 'jsonwebtoken';
 import { pool } from '../db.js';
 import { env } from '../env.js';
 import { requireAuth } from '../middleware/auth.js';
+import { firstError, guestSchema, loginSchema, registerSchema } from '../schemas.js';
 
 const router = Router();
-
-const USERNAME_RE = /^[a-zA-Z0-9_-]{3,20}$/;
 
 function signToken(payload: { sub: string; kind: 'user' | 'guest'; username: string }) {
   return jwt.sign(payload, env.jwtSecret, { expiresIn: '30d' });
@@ -17,16 +16,9 @@ function signToken(payload: { sub: string; kind: 'user' | 'guest'; username: str
  * AUTH-1 — Inscription par nom d'utilisateur + mot de passe, sans courriel.
  */
 router.post('/register', async (req, res) => {
-  const { username, password } = req.body ?? {};
-
-  if (typeof username !== 'string' || !USERNAME_RE.test(username)) {
-    return res.status(400).json({
-      error: "Le nom d'utilisateur doit contenir 3 à 20 caractères (lettres, chiffres, - ou _).",
-    });
-  }
-  if (typeof password !== 'string' || password.length < 6) {
-    return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères.' });
-  }
+  const parsed = registerSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: firstError(parsed.error) });
+  const { username, password } = parsed.data;
 
   const existing = await pool.query('SELECT id FROM "user" WHERE username = $1', [username]);
   if (existing.rowCount && existing.rowCount > 0) {
@@ -50,10 +42,11 @@ router.post('/register', async (req, res) => {
  * Connexion par nom d'utilisateur + mot de passe.
  */
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body ?? {};
-  if (typeof username !== 'string' || typeof password !== 'string') {
+  const parsed = loginSchema.safeParse(req.body);
+  if (!parsed.success) {
     return res.status(400).json({ error: "Nom d'utilisateur et mot de passe requis." });
   }
+  const { username, password } = parsed.data;
 
   const result = await pool.query(
     'SELECT id, username, password_hash FROM "user" WHERE username = $1',
@@ -77,14 +70,13 @@ router.post('/login', async (req, res) => {
  * AUTH-3 — Jouer en tant qu'invité, sans compte.
  */
 router.post('/guest', async (req, res) => {
-  const { displayName } = req.body ?? {};
-  if (typeof displayName !== 'string' || displayName.trim().length < 2 || displayName.length > 20) {
-    return res.status(400).json({ error: 'Le nom affiché doit contenir 2 à 20 caractères.' });
-  }
+  const parsed = guestSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: firstError(parsed.error) });
+  const { displayName } = parsed.data;
 
   const result = await pool.query(
     `INSERT INTO guest_session (display_name) VALUES ($1) RETURNING id, display_name, created_at`,
-    [displayName.trim()],
+    [displayName],
   );
   const guest = result.rows[0];
 
