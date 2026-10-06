@@ -17,6 +17,10 @@
     "lint": "npm run lint -w client",
     "migrate": "npm run migrate -w server",
     "dev": "npm run dev -w server",
-    "seed": "npm run seed -w server"
+    "seed": "npm run seed -w server",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
   }
 }

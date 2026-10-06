@@ -10,3 +10,5 @@ coverage/
 .vscode/
 .next/
 *.tsbuildinfo
+test-results/
+playwright-report/
