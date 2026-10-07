@@ -1,7 +1,6 @@
 # Démarche créative — HotKB
 
 > Document exigé par DES-01 à DES-03. **Le nom et le logo sont de l'auteur, sans IA** (DES-01, DES-02).
-> Les sections marquées `À COMPLÉTER` doivent être rédigées par l'auteur.
 
 ## 1. Nom du site (DES-01)
 
@@ -39,21 +38,21 @@ Aucun. « HotKB » est le seul nom auquel l'auteur a pensé : l'idée est venue 
 
 Quatre références, choisies avec l'auteur (Monkeytype et l'envie d'un univers de « flammes » viennent de l'auteur ; TypeRacer et Kahoot sont les références citées par l'énoncé du travail) :
 
-| Référence | Ce qui en est retenu | Où on le voit dans HotKB |
-|---|---|---|
-| **Monkeytype** (monkeytype.com) | Zone de frappe très lisible, retour immédiat sur chaque lettre, curseur clignotant, choix de thèmes | Aperçu de frappe animé sous le titre (`TypingDemo.tsx`) ; thèmes clair et sombre |
-| **Flamme de série de Duolingo** | Une flamme simple, arrondie et chaude, symbole de l'effort et de la progression ; ton amical et ludique | Logo en forme de flamme, palette flamme / braise / miel, braises et flammes animées en arrière-plan (`FlameBackground.tsx`) |
-| **TypeRacer** (typeracer.com) | La piste de course où chaque joueur avance en direct | **Élément signature** : la piste de progression avec coureurs, traînée de flamme et ligne d'arrivée (`RaceTrack.tsx`) |
-| **Kahoot** (kahoot.com) | Salle d'attente colorée, code de salle très visible, ambiance de jeu entre amis | Code de salle en grosses tuiles dans le lobby (`Lobby.tsx`) |
+| Référence | Ce qui en est retenu | Où on le voit dans HotKB | Ce que j'aime (l'auteur) |
+|---|---|---|---|
+| **Monkeytype** (monkeytype.com) | Zone de frappe très lisible, retour immédiat sur chaque lettre, curseur clignotant, choix de thèmes | Aperçu de frappe animé sous le titre (`TypingDemo.tsx`) ; thèmes clair et sombre | « J'aime bien quand on tape : les lettres sont claires et changent de couleur quand on les tape. » |
+| **Flamme de série de Duolingo** | Une flamme simple, arrondie et chaude, symbole de l'effort et de la progression ; ton amical et ludique | Logo en forme de flamme, palette flamme / braise / miel, braises et flammes animées en arrière-plan (`FlameBackground.tsx`) | « J'aime bien le thème de la flamme. » |
+| **TypeRacer** (typeracer.com) | La piste de course où chaque joueur avance en direct | **Élément signature** : la piste de progression avec coureurs, traînée de flamme et ligne d'arrivée (`RaceTrack.tsx`) | « J'aime le format de la course. » |
+| **Kahoot** (kahoot.com) | Salle d'attente colorée, code de salle très visible, ambiance de jeu entre amis | Code de salle en grosses tuiles dans le lobby (`Lobby.tsx`) | « J'aime la page d'accueil pour rejoindre une course. » |
 
-`À COMPLÉTER` par l'auteur : une phrase, dans ses mots, sur ce qu'il aime de chaque référence (et ajout éventuel d'une 5e).
+Les phrases de la dernière colonne sont celles de l'auteur, écrites dans ses mots.
 
 ### Palette
 
 Une palette entièrement chaude, cohérente avec le nom :
 
 | Rôle | Clair | Sombre |
-|---|---|---|
+|---|---|---|---|
 | Flamme (accent, actions principales) | `#ff4f1f` | `#ff6a3d` |
 | Braise (vitesse, secondaire) | `#ffb347` | `#ffcb66` |
 | Miel (succès) | `#ffc825` | `#ffd454` |
