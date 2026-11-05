@@ -1,6 +1,7 @@
 import {
   boolean,
   check,
+  customType,
   integer,
   jsonb,
   pgTable,
@@ -18,6 +19,8 @@ import { sql } from 'drizzle-orm';
  * Les migrations restent la source de vérité du schéma en base (TECH-04).
  */
 
+const bytea = customType<{ data: Buffer }>({ dataType: () => 'bytea' });
+
 export const users = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
   username: varchar('username', { length: 32 }).notNull().unique(),
@@ -25,6 +28,9 @@ export const users = pgTable('user', {
   authProvider: varchar('auth_provider', { length: 32 }).notNull().default('local'),
   providerId: text('provider_id'),
   avatarUrl: text('avatar_url'),
+  displayName: varchar('display_name', { length: 20 }),
+  avatarData: bytea('avatar_data'),
+  avatarUpdatedAt: timestamp('avatar_updated_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -57,6 +63,8 @@ export const roomParticipants = pgTable(
     isBot: boolean('is_bot').notNull().default(false),
     botDifficulty: varchar('bot_difficulty', { length: 16 }),
     isSpectator: boolean('is_spectator').notNull().default(false),
+    botName: varchar('bot_name', { length: 32 }),
+    leftAt: timestamp('left_at', { withTimezone: true }),
     joinedAt: timestamp('joined_at', { withTimezone: true }).notNull().defaultNow(),
   },
   () => [
@@ -73,6 +81,7 @@ export const textes = pgTable('texte', {
   language: varchar('language', { length: 8 }).notNull().default('fr'),
   length: integer('length').notNull(),
   containsAccents: boolean('contains_accents').notNull().default(false),
+  complexity: varchar('complexity', { length: 8 }).notNull().default('medium'),
 });
 
 export const races = pgTable('race', {
@@ -80,9 +89,10 @@ export const races = pgTable('race', {
   roomId: uuid('room_id')
     .notNull()
     .references(() => rooms.id, { onDelete: 'cascade' }),
-  texteId: uuid('texte_id')
-    .notNull()
-    .references(() => textes.id),
+  texteId: uuid('texte_id').references(() => textes.id),
+  textContent: text('text_content'),
+  language: varchar('language', { length: 8 }),
+  settings: jsonb('settings').notNull().default({}),
   startedAt: timestamp('started_at', { withTimezone: true }),
   durationSeconds: integer('duration_seconds'),
   status: varchar('status', { length: 16 }).notNull().default('en_attente'),
@@ -100,6 +110,14 @@ export const raceResults = pgTable('race_result', {
   accuracy: real('accuracy'),
   rank: integer('rank'),
   errorsCount: integer('errors_count').notNull().default(0),
+  rawWpm: real('raw_wpm'),
+  timeMs: integer('time_ms'),
+  status: varchar('status', { length: 16 }).notNull().default('termine'),
+  progress: real('progress').notNull().default(1),
+  bonuses: jsonb('bonuses').notNull().default([]),
+  wpmSeries: jsonb('wpm_series').notNull().default([]),
+  keyErrors: jsonb('key_errors').notNull().default({}),
+  personalRecord: boolean('personal_record').notNull().default(false),
 });
 
 export const personalBests = pgTable(
@@ -130,3 +148,16 @@ export const keyErrorStats = pgTable(
   },
   (t) => [unique().on(t.userId, t.keyChar)],
 );
+
+export const roomInvites = pgTable('room_invite', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  roomId: uuid('room_id')
+    .notNull()
+    .references(() => rooms.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  usedByName: varchar('used_by_name', { length: 32 }),
+  usedByIdentity: text('used_by_identity'),
+  usedIp: text('used_ip'),
+  revoked: boolean('revoked').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
