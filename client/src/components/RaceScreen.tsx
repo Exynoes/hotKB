@@ -47,7 +47,7 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
         onKeys(buffer.current);
         buffer.current = '';
       }
-    }, 80);
+    }, 100);
     return () => clearInterval(id);
   }, [onKeys]);
 
@@ -83,6 +83,25 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
     },
     [active, text, room.settings.errorMode],
   );
+
+  // Resynchronisation : si une salve de frappes est perdue, le client serait en avance sur le serveur
+  // pour toujours. On recale sur la position confirmée (progression × longueur) dès que l'écart persiste.
+  const lagTicks = useRef(0);
+  useEffect(() => {
+    if (!me || !textLen || me.st !== 'en_course') return;
+    const serverPos = Math.round(me.p * textLen);
+    if (posRef.current - serverPos > 20) {
+      lagTicks.current += 1;
+      if (lagTicks.current >= 2) {
+        posRef.current = serverPos;
+        setPos(serverPos);
+        buffer.current = '';
+        lagTicks.current = 0;
+      }
+    } else {
+      lagTicks.current = 0;
+    }
+  }, [tick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // le serveur peut raccourcir ou rallonger le texte (bonus) : on recale sur sa position
   useEffect(() => {

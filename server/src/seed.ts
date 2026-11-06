@@ -118,11 +118,11 @@ export async function seed() {
       const code = `D${String(i + 1).padStart(2, '0')}EMO`;
       const [room] = await db
         .insert(rooms)
-        .values({ code, visibility: 'open', hostUserId: demo.id, status: 'resultats' })
+        .values({ code, visibility: 'open', hostUserId: demo.id, status: 'fermee' })
         .returning();
       const [participant] = await db
         .insert(roomParticipants)
-        .values({ roomId: room.id, userId: demo.id })
+        .values({ roomId: room.id, userId: demo.id, leftAt: new Date() })
         .returning();
       const [race] = await db
         .insert(races)

@@ -38,7 +38,7 @@ export default function TopBar() {
   const { lang, toggle: toggleLang } = useLang();
 
   return (
-    <div className="fixed top-4 right-4 flex gap-2">
+    <nav aria-label="Préférences / Preferences" className="fixed top-4 right-4 flex gap-2">
       <button
         onClick={toggleLang}
         aria-label={`${lang === 'fr' ? 'EN' : 'FR'} — Changer de langue / Switch language`}
@@ -55,6 +55,6 @@ export default function TopBar() {
       >
         {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
       </button>
-    </div>
+    </nav>
   );
 }

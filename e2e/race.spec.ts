@@ -18,6 +18,9 @@ test('un joueur affronte un bot et voit ses résultats (COURSE-01, BOT-01, RES-0
   await expect(page.getByLabel('Accents')).not.toBeChecked();
   await page.getByLabel('Ponctuation').click();
   await expect(page.getByLabel('Ponctuation')).not.toBeChecked();
+  // bonus coupés : un « +3 mots » allongerait le texte pendant que le test le tape
+  await page.getByLabel('Bonus de remontée').click();
+  await expect(page.getByLabel('Bonus de remontée')).not.toBeChecked();
   await page.getByLabel('Ajouter un bot').first().selectOption('impossible');
   await page.getByRole('button', { name: 'Ajouter un bot' }).click();
   await page.getByRole('button', { name: 'Démarrer la course' }).click();
@@ -31,6 +34,7 @@ test('un joueur affronte un bot et voit ses résultats (COURSE-01, BOT-01, RES-0
   await box.focus();
   await page.keyboard.type(text, { delay: 60 });
 
-  await expect(page.getByRole('heading', { name: 'Résultats' })).toBeVisible({ timeout: 30_000 });
+  const heading = page.getByRole('heading', { name: 'Résultats' });
+  await expect(heading).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole('button', { name: 'Rejouer' })).toBeVisible();
 });

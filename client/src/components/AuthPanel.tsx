@@ -89,6 +89,7 @@ export default function AuthPanel() {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             placeholder={t('guestPlaceholder')}
+            aria-label={t('guestPlaceholder')}
             minLength={3}
             maxLength={20}
             required
@@ -101,6 +102,7 @@ export default function AuthPanel() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder={t('usernamePlaceholder')}
+            aria-label={t('usernamePlaceholder')}
               maxLength={20}
               required
               className="rounded-xl border px-4 py-3"
@@ -110,6 +112,7 @@ export default function AuthPanel() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={t('passwordPlaceholder')}
+            aria-label={t('passwordPlaceholder')}
               type="password"
               minLength={6}
               required

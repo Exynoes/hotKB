@@ -845,7 +845,8 @@ export class RoomManager {
     if (typeof keys !== 'string' || keys.length === 0 || keys.length > 64) return;
     const found = this.memberOf(socket);
     const race = found?.room.race;
-    if (!found || !race || found.room.status !== 'en_course') return;
+    // le minuteur de départ peut avoir quelques ms de retard : on accepte dès que l'heure de départ est passée
+    if (!found || !race || (found.room.status !== 'en_course' && found.room.status !== 'decompte')) return;
     const pr = race.players.get(found.member.key);
     if (!pr || pr.kind === 'bot' || pr.status !== 'en_course') return;
     const elapsed = now - race.startsAt;

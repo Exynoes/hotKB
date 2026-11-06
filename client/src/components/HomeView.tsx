@@ -27,7 +27,7 @@ export default function HomeView() {
       <FlameBackground />
       <main className="min-h-screen flex flex-col items-center justify-center gap-6 px-4 py-12 text-center">
         <TopBar />
-        <div className="flex flex-col items-center gap-2">
+        <header className="flex flex-col items-center gap-2">
           <img src="/logo.png" width="96" height="96" alt="Logo HotKB" />
           <h1 className="text-5xl font-extrabold">
             Hot<span style={{ color: "var(--accent)" }}>KB</span>
@@ -35,7 +35,7 @@ export default function HomeView() {
           <p className="max-w-md" style={{ color: "var(--muted)" }}>
             {t("tagline")}
           </p>
-        </div>
+        </header>
 
         {!ready ? null : !identity ? (
           <AuthPanel />
