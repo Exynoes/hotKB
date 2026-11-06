@@ -26,7 +26,11 @@ export const env = {
     },
   },
   /** Décompte avant la course (COURSE-03) et délai de reconnexion (COURSE-08), réglables pour les tests. */
-  countdownMs: Number(process.env.COUNTDOWN_MS ?? 3000),
-  reconnectGraceMs: Number(process.env.RECONNECT_GRACE_MS ?? 30000),
+  get countdownMs() {
+    return Number(process.env.COUNTDOWN_MS ?? 3000);
+  },
+  get reconnectGraceMs() {
+    return Number(process.env.RECONNECT_GRACE_MS ?? 30000);
+  },
   corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
 };

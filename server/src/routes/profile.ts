@@ -5,6 +5,7 @@ import { db } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { raceResults, races, roomParticipants, textes, users } from '../schema.js';
 import { firstError } from '../schemas.js';
+import { avatarUrlFor } from '../rooms/persist.js';
 
 /**
  * AUTH-06 — statistiques personnelles ; HIST-01 — historique paginé.
@@ -29,39 +30,49 @@ function resultsOf(userId: string) {
       accuracy: raceResults.accuracy,
       rank: raceResults.rank,
       errors: raceResults.errorsCount,
-      language: textes.language,
+      status: raceResults.status,
+      personalRecord: raceResults.personalRecord,
+      language: sql<string>`coalesce(${races.language}, ${textes.language}, 'fr')`,
     })
     .from(raceResults)
     .innerJoin(roomParticipants, eq(raceResults.participantId, roomParticipants.id))
     .innerJoin(races, eq(raceResults.raceId, races.id))
-    .innerJoin(textes, eq(races.texteId, textes.id))
+    .leftJoin(textes, eq(races.texteId, textes.id))
     .where(eq(roomParticipants.userId, userId));
 }
 
 router.get('/profile', async (req, res) => {
   const userId = req.auth!.sub;
   const [user] = await db
-    .select({ username: users.username, avatarUrl: users.avatarUrl, createdAt: users.createdAt })
+    .select({
+      username: users.username,
+      displayName: users.displayName,
+      avatarUpdatedAt: users.avatarUpdatedAt,
+      createdAt: users.createdAt,
+    })
     .from(users)
     .where(eq(users.id, userId));
   if (!user) return res.status(404).json({ error: 'Compte introuvable.' });
 
   const rows = await resultsOf(userId).orderBy(asc(races.startedAt));
-  const wpms = rows.map((r) => r.wpm ?? 0);
-  const accuracies = rows.map((r) => r.accuracy ?? 0);
+  // un abandon ne compte pas dans les moyennes ni dans le meilleur MPM
+  const played = rows.filter((r) => r.status !== 'abandon');
+  const wpms = played.map((r) => r.wpm ?? 0);
+  const accuracies = played.map((r) => r.accuracy ?? 0);
   const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 
   res.json({
     username: user.username,
-    avatarUrl: user.avatarUrl,
+    displayName: user.displayName ?? user.username,
+    avatarUrl: avatarUrlFor(userId, user.avatarUpdatedAt),
     stats: {
-      races: rows.length,
-      wins: rows.filter((r) => r.rank === 1).length,
+      races: played.length,
+      wins: played.filter((r) => r.rank === 1).length,
       bestWpm: wpms.length ? Math.max(...wpms) : 0,
       avgWpm: Math.round(avg(wpms) * 10) / 10,
       avgAccuracy: Math.round(avg(accuracies) * 10) / 10,
     },
-    progression: rows.map((r) => ({ date: r.startedAt, wpm: r.wpm ?? 0 })),
+    progression: played.map((r) => ({ date: r.startedAt, wpm: r.wpm ?? 0 })),
   });
 });
 

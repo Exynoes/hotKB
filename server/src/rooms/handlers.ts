@@ -29,7 +29,7 @@ export function registerRoomHandlers(io: Server, socket: Socket) {
   socket.on('room:join', guarded(joinAnySchema, (data, ack) => m.join(socket, data, ack)));
   socket.on('room:quick', ackOnly((ack) => m.quick(socket, ack)));
   socket.on('room:resume', ackOnly((ack) => m.resume(socket, ack)));
-  socket.on('room:leave', () => void m.leave(socket));
+  socket.on('room:leave', ackOnly((ack) => m.leave(socket).then(() => ack?.({ ok: true }))));
   socket.on('room:start', ackOnly((ack) => m.start(socket, ack)));
   socket.on('room:close', ackOnly((ack) => m.close(socket, ack)));
   socket.on('room:lobby', ackOnly((ack) => m.backToLobby(socket, ack)));

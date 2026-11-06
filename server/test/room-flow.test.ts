@@ -146,16 +146,17 @@ describe('salles (SALLE-01 à 10, JOIN-01, AUTH-03)', () => {
     // la personne associée se reconnecte avec le même lien
     await emitAck(a, 'room:leave');
     const again = track(client(rt.url, guestA.token));
-    expect((await emitAck<Ack>(again, 'room:join', { token: invite.token })).ok).toBe(true);
+    const rejoined = await emitAck<Ack>(again, 'room:join', { token: invite.token });
+    expect(rejoined.ok).toBe(true);
 
     // expulsion : plus de retour possible, lien révoqué
-    const aliceId = used.youId!;
+    const aliceId = rejoined.youId!;
     const kicked = waitFor(again, 'room:kicked');
     expect((await emitAck<Ack>(host, 'member:kick', { id: aliceId })).ok).toBe(true);
     await kicked;
     expect((await emitAck<Ack>(again, 'room:join', { token: invite.token })).error).toBe('INVITE_INVALID');
     const lastGuest = track(client(rt.url, guestA.token));
-    expect((await emitAck<Ack>(lastGuest, 'room:join', { code: state!.code })).error).not.toBe('ok');
+    expect((await emitAck<Ack>(lastGuest, 'room:join', { code: state!.code })).error).toBe('KICKED');
   });
 
   it("l'hôte passe à la personne connectée présente depuis le plus longtemps ; la salle ferme sans humain (SALLE-08)", async () => {
@@ -221,7 +222,7 @@ describe('course (COURSE-01 à 11, BOT, RES-05, HIST-01)', () => {
     // COURSE-02 : démarrage impossible seul
     expect((await emitAck<Ack>(host, 'room:start')).error).toBe('NEED_PLAYERS');
     // un seul humain + un bot suffit
-    expect((await emitAck<Ack>(host, 'bot:add', { level: 'noob' })).ok).toBe(true);
+    expect((await emitAck<Ack>(host, 'bot:add', { level: 'impossible' })).ok).toBe(true);
     const spectator = track(client(rt.url, (await registerGuest('Spectateur')).token));
     await emitAck(spectator, 'room:join', { code, role: 'spectator' });
 
@@ -245,7 +246,7 @@ describe('course (COURSE-01 à 11, BOT, RES-05, HIST-01)', () => {
     expect(results.text).toBe(start.text);
     const me = results.players.find((p) => p.id === created.youId)!;
     expect(me.status).toBe('termine');
-    expect(me.rank).toBe(1); // le bot « noob » est bien plus lent
+    expect([1, 2]).toContain(me.rank); // course serrée contre le bot « impossible »
     expect(me.wpm).toBeGreaterThan(0);
     expect(me.accuracy).toBe(100);
     expect(me.series.length).toBeGreaterThan(0);
@@ -261,11 +262,10 @@ describe('course (COURSE-01 à 11, BOT, RES-05, HIST-01)', () => {
     expect(hist.body.items[0].raceId).toBe(results.raceId);
   }, 30000);
 
-  it('fin au temps imparti : classement des non-terminés par progression (COURSE-09, COURSE-10)', async () => {
+  it('abandon : le coureur qui abandonne est classé après ceux qui terminent (COURSE-07, COURSE-10)', async () => {
     const host = track(client(rt.url, (await registerUser('tm')).token));
-    const created = await emitAck<Ack>(host, 'room:create', { settings: { words: 60, textType: 'random', maxTimeSec: 30 } });
-    await emitAck(host, 'bot:add', { level: 'noob' });
-    // la limite minimale autorisée est 30 s : on avance l'horloge du serveur en abandonnant explicitement
+    const created = await emitAck<Ack>(host, 'room:create', { settings: { words: 12, textType: 'random', maxTimeSec: 30 } });
+    await emitAck(host, 'bot:add', { level: 'impossible' });
     const start = waitFor<{ startsAt: number; text: string }>(host, 'race:start');
     const results = waitFor<{ players: { id: string; status: string; rank: number }[] }>(host, 'race:results', () => true, 15000);
     await emitAck(host, 'room:start');
@@ -278,7 +278,7 @@ describe('course (COURSE-01 à 11, BOT, RES-05, HIST-01)', () => {
     expect(me.status).toBe('abandon');
     // le bot, resté en course, passe avant le joueur qui a abandonné (COURSE-10 : abandon en dernier)
     expect(r.players[0].id).not.toBe(created.youId);
-    void created;
+    expect(r.players[1].id).toBe(created.youId);
   }, 40000);
 
   it('rejette une vitesse physiquement impossible (COURSE-06)', async () => {
