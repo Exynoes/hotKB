@@ -57,7 +57,7 @@ export default function HomeView() {
             <div className="flex gap-3 items-center">
               {room.members.find((m) => m.id === myId)?.isHost ? (
                 <>
-                  <button onClick={rm.rematch} className="rounded-xl px-5 py-3 font-bold text-white" style={{ background: 'var(--accent)' }}>{t('rematch')}</button>
+                  <button onClick={rm.rematch} className="rounded-xl px-5 py-3 font-bold text-white" style={{ background: 'var(--accent-btn)' }}>{t('rematch')}</button>
                   <button onClick={rm.backToLobby} className="underline">{t('backToLobby')}</button>
                   <button onClick={rm.closeRoom} className="underline">{t('closeRoom')}</button>
                 </>
@@ -124,7 +124,7 @@ export default function HomeView() {
               <button
                 type="submit"
                 className="w-full rounded-2xl px-5 py-4 text-xl font-extrabold text-white"
-                style={{ background: "var(--accent)" }}
+                style={{ background: "var(--accent-btn)" }}
               >
                 {t("join")}
               </button>

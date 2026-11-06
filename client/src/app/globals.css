@@ -8,9 +8,11 @@
   --bg: #fbf5f1;
   --surface: #ffffff;
   --fg: #271613;
-  --muted: #8a6f68;
+  --muted: #6f564f;
   --border: #f0ded4;
   --accent: #ff4f1f;
+  --accent-text: #c93a0e;
+  --accent-btn: #c93a0e; /* fond des boutons à texte blanc : contraste 5,1:1 (WCAG AA) */
   --accent-2: #ffb347;
   --success: #ffc825;
   --danger: #ff3b5c;
@@ -30,6 +32,7 @@
     --muted: #b89892;
     --border: #3a2620;
     --accent: #ff6a3d;
+    --accent-text: #ff6a3d;
     --accent-2: #ffcb66;
     --success: #ffd454;
     --danger: #ff5c7a;
@@ -44,6 +47,7 @@
   --muted: #b89892;
   --border: #3a2620;
   --accent: #ff6a3d;
+  --accent-text: #ff6a3d;
   --accent-2: #ffcb66;
   --success: #ffd454;
   --danger: #ff5c7a;
@@ -235,7 +239,7 @@ main {
   top: 0;
   overflow: hidden;
   width: 0;
-  color: var(--accent);
+  color: var(--accent-text);
   animation: typing 5s steps(var(--n)) infinite;
 }
 .typing-caret {

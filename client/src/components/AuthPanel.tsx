@@ -74,7 +74,7 @@ export default function AuthPanel() {
             className="flex-1 rounded-lg py-2 text-sm font-semibold transition"
             style={
               tab === t.id
-                ? { background: 'var(--accent)', color: '#fff' }
+                ? { background: 'var(--accent-btn)', color: '#fff' }
                 : { color: 'var(--muted)' }
             }
           >
@@ -129,7 +129,7 @@ export default function AuthPanel() {
           type="submit"
           disabled={loading}
           className="rounded-xl py-3 font-semibold text-white disabled:opacity-60"
-          style={{ background: 'var(--accent)' }}
+          style={{ background: 'var(--accent-btn)' }}
         >
           {loading
             ? '...'

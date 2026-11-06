@@ -197,7 +197,7 @@ export default function Lobby({
 
       {racers < 2 && <p className="text-sm" style={{ color: 'var(--muted)' }}>{t('waitingForPlayers')}</p>}
       {isHost ? (
-        <button onClick={actions.onStart} disabled={racers < 2} className="rounded-xl py-3 font-bold text-white disabled:opacity-50" style={{ background: 'var(--accent)' }}>
+        <button onClick={actions.onStart} disabled={racers < 2} className="rounded-xl py-3 font-bold text-white disabled:opacity-50" style={{ background: 'var(--accent-btn)' }}>
           {t('startRace')}
         </button>
       ) : (

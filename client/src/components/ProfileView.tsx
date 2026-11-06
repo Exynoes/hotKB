@@ -93,7 +93,7 @@ function Identity({ profile, token, onChange }: { profile: ProfileData; token: s
           {t('displayName')}
           <input value={name} maxLength={20} onChange={(e) => setName(e.target.value)} className="rounded-lg px-3 py-2 mt-1" style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
         </label>
-        <button type="submit" className="rounded-lg px-4 py-2 font-semibold text-white" style={{ background: 'var(--accent)' }}>{t('save')}</button>
+        <button type="submit" className="rounded-lg px-4 py-2 font-semibold text-white" style={{ background: 'var(--accent-btn)' }}>{t('save')}</button>
       </form>
       {msg && <p role="status" className="text-sm w-full" style={{ color: 'var(--muted)' }}>{msg}</p>}
     </section>

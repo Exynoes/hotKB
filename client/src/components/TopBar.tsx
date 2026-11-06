@@ -41,7 +41,7 @@ export default function TopBar() {
     <div className="fixed top-4 right-4 flex gap-2">
       <button
         onClick={toggleLang}
-        aria-label="Changer de langue / Switch language"
+        aria-label={`${lang === 'fr' ? 'EN' : 'FR'} — Changer de langue / Switch language`}
         className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-mono font-bold"
         style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)' }}
       >

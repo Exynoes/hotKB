@@ -30,7 +30,7 @@ export default function JoinView({ token }: { token: string }) {
         {!ready ? null : !identity ? (
           <AuthPanel />
         ) : (
-          <button onClick={() => rm.joinWithToken(token)} className="rounded-2xl px-6 py-4 text-xl font-extrabold text-white" style={{ background: 'var(--accent)' }}>
+          <button onClick={() => rm.joinWithToken(token)} className="rounded-2xl px-6 py-4 text-xl font-extrabold text-white" style={{ background: 'var(--accent-btn)' }}>
             {t('joinNow')}
           </button>
         )}
