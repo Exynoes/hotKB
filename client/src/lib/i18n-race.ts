@@ -124,6 +124,11 @@ export const raceFr = {
   inProgress: 'en cours',
   lobbyWaiting: 'Salle d’attente',
   copyLink: 'Copier le lien',
+  saved: 'Enregistré.',
+  changePhoto: 'Changer la photo',
+  removePhoto: 'Retirer la photo',
+  displayName: 'Nom affiché',
+  save: 'Enregistrer',
   waitingEnd: 'on attend les autres coureurs',
 } as const;
 
@@ -252,5 +257,10 @@ export const raceEn: Record<keyof typeof raceFr, string> = {
   inProgress: 'in progress',
   lobbyWaiting: 'Waiting room',
   copyLink: 'Copy link',
+  saved: 'Saved.',
+  changePhoto: 'Change photo',
+  removePhoto: 'Remove photo',
+  displayName: 'Display name',
+  save: 'Save',
   waitingEnd: 'waiting for the other racers',
 };

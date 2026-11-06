@@ -6,6 +6,7 @@ import TopBar from './TopBar';
 import FlameBackground from './FlameBackground';
 import { useAuth } from '../lib/auth';
 import { useLang } from '../lib/i18n';
+import Avatar from './Avatar';
 import { profileApi, type HistoryPage, type ProfileData } from '../lib/api';
 
 const card = { background: 'var(--surface)', border: '1px solid var(--border)' } as const;
@@ -44,6 +45,58 @@ function ProgressChart({ points, label }: { points: { date: string; wpm: number 
         </circle>
       ))}
     </svg>
+  );
+}
+
+function Identity({ profile, token, onChange }: { profile: ProfileData; token: string; onChange: (p: ProfileData) => void }) {
+  const { t } = useLang();
+  const [name, setName] = useState(profile.displayName);
+  const [msg, setMsg] = useState<string | null>(null);
+  const run = async (fn: () => Promise<Partial<ProfileData>>) => {
+    try {
+      onChange({ ...profile, ...(await fn()) });
+      setMsg(t('saved'));
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : t('genericError'));
+    }
+  };
+  return (
+    <section className="rounded-2xl p-4 flex flex-wrap items-center gap-4" style={card}>
+      <Avatar name={profile.displayName} url={profile.avatarUrl} size={72} />
+      <div className="flex flex-col gap-2">
+        <label className="text-sm underline cursor-pointer">
+          {t('changePhoto')}
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="sr-only"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void run(async () => ({ avatarUrl: (await profileApi.uploadAvatar(token, f)).avatarUrl }));
+            }}
+          />
+        </label>
+        {profile.avatarUrl && (
+          <button className="text-sm underline text-left" onClick={() => void run(async () => ({ avatarUrl: (await profileApi.removeAvatar(token)).avatarUrl }))}>
+            {t('removePhoto')}
+          </button>
+        )}
+      </div>
+      <form
+        className="flex items-end gap-2 flex-1 min-w-56"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void run(async () => ({ displayName: (await profileApi.setDisplayName(token, name)).displayName }));
+        }}
+      >
+        <label className="flex flex-col text-sm flex-1">
+          {t('displayName')}
+          <input value={name} maxLength={20} onChange={(e) => setName(e.target.value)} className="rounded-lg px-3 py-2 mt-1" style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+        </label>
+        <button type="submit" className="rounded-lg px-4 py-2 font-semibold text-white" style={{ background: 'var(--accent)' }}>{t('save')}</button>
+      </form>
+      {msg && <p role="status" className="text-sm w-full" style={{ color: 'var(--muted)' }}>{msg}</p>}
+    </section>
   );
 }
 
@@ -92,6 +145,7 @@ export default function ProfileView() {
         ) : (
           <>
             <p className="text-xl font-semibold">{profile.username}</p>
+            <Identity profile={profile} token={token!} onChange={setProfile} />
             <dl className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               <Stat label={t('statBest')} value={profile.stats.bestWpm} />
               <Stat label={t('statAvg')} value={profile.stats.avgWpm} />
@@ -122,6 +176,7 @@ export default function ProfileView() {
                       <th scope="col">{t('colAccuracy')}</th>
                       <th scope="col">{t('colRank')}</th>
                       <th scope="col">{t('colErrors')}</th>
+                      <th scope="col"><span className="sr-only">{t('seeDetail')}</span></th>
                     </tr>
                   </thead>
                   <tbody className="font-mono">
@@ -132,6 +187,7 @@ export default function ProfileView() {
                         <td>{r.accuracy}%</td>
                         <td>{r.rank}</td>
                         <td>{r.errors}</td>
+                        <td><Link href={`/results/${r.raceId}`} className="underline">{t('seeDetail')}</Link></td>
                       </tr>
                     ))}
                   </tbody>

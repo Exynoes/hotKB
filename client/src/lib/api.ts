@@ -56,6 +56,7 @@ export const authApi = {
 
 export interface ProfileData {
   username: string;
+  displayName: string;
   avatarUrl: string | null;
   stats: { races: number; wins: number; bestWpm: number; avgWpm: number; avgAccuracy: number };
   progression: { date: string; wpm: number }[];
@@ -80,7 +81,18 @@ export interface HistoryPage {
 
 const bearer = (token: string) => ({ Authorization: `Bearer ${token}` });
 
+import type { RaceResults } from './room-types';
+
+export const racesApi = {
+  get: (token: string, id: string) => request<RaceResults>(`/races/${id}`, { headers: bearer(token) }),
+};
+
 export const profileApi = {
+  setDisplayName: (token: string, displayName: string) =>
+    request<{ displayName: string }>('/me/display-name', { method: 'PATCH', headers: bearer(token), body: JSON.stringify({ displayName }) }),
+  uploadAvatar: (token: string, file: File) =>
+    request<{ avatarUrl: string }>('/me/avatar', { method: 'PUT', headers: { ...bearer(token), 'Content-Type': file.type || 'application/octet-stream' }, body: file }),
+  removeAvatar: (token: string) => request<{ avatarUrl: null }>('/me/avatar', { method: 'DELETE', headers: bearer(token) }),
   profile: (token: string) => request<ProfileData>('/me/profile', { headers: bearer(token) }),
   history: (token: string, page: number, pageSize = 5) =>
     request<HistoryPage>(`/me/history?page=${page}&pageSize=${pageSize}`, { headers: bearer(token) }),

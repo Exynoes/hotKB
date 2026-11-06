@@ -1,4 +1,5 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
+import sharp from 'sharp';
 import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db.js';
@@ -99,6 +100,48 @@ router.get('/history', async (req, res) => {
     .offset((page - 1) * pageSize);
 
   res.json({ page, pageSize, total, items });
+});
+
+/** AUTH-05 : nom affiché modifiable (distinct du nom d'utilisateur de connexion). */
+const displayNameSchema = z.object({
+  displayName: z.string().trim().min(2, 'Le nom doit avoir au moins 2 caractères.').max(20, 'Le nom ne peut pas dépasser 20 caractères.'),
+});
+
+router.patch('/display-name', async (req, res) => {
+  const parsed = displayNameSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: firstError(parsed.error) });
+  await db.update(users).set({ displayName: parsed.data.displayName }).where(eq(users.id, req.auth!.sub));
+  res.json({ displayName: parsed.data.displayName });
+});
+
+/** Signatures de fichiers image acceptées (on ne se fie ni à l'extension ni au Content-Type). */
+function looksLikeImage(b: Buffer) {
+  const png = b.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  const jpg = b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+  const webp = b.subarray(0, 4).toString('latin1') === 'RIFF' && b.subarray(8, 12).toString('latin1') === 'WEBP';
+  return png || jpg || webp;
+}
+
+/** AUTH-04 : photo de profil (≤ 2 Mo, PNG/JPEG/WebP), redimensionnée en 256×256 WebP côté serveur. */
+router.put('/avatar', express.raw({ type: () => true, limit: '2mb' }), async (req, res) => {
+  const body = req.body as Buffer;
+  if (!Buffer.isBuffer(body) || body.length === 0 || !looksLikeImage(body)) {
+    return res.status(400).json({ error: 'Image invalide (PNG, JPEG ou WebP, 2 Mo maximum).' });
+  }
+  let data: Buffer;
+  try {
+    data = await sharp(body, { limitInputPixels: 40_000_000 }).rotate().resize(256, 256, { fit: 'cover' }).webp({ quality: 85 }).toBuffer();
+  } catch {
+    return res.status(400).json({ error: 'Image invalide (PNG, JPEG ou WebP, 2 Mo maximum).' });
+  }
+  const now = new Date();
+  await db.update(users).set({ avatarData: data, avatarUpdatedAt: now }).where(eq(users.id, req.auth!.sub));
+  res.json({ avatarUrl: avatarUrlFor(req.auth!.sub, now) });
+});
+
+router.delete('/avatar', async (req, res) => {
+  await db.update(users).set({ avatarData: null, avatarUpdatedAt: null }).where(eq(users.id, req.auth!.sub));
+  res.json({ avatarUrl: null });
 });
 
 export default router;

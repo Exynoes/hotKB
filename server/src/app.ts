@@ -5,6 +5,8 @@ import healthRouter from './routes/health.js';
 import authRouter from './routes/auth.js';
 import oauthRouter from './routes/oauth.js';
 import profileRouter from './routes/profile.js';
+import racesRouter from './routes/races.js';
+import avatarsRouter from './routes/avatars.js';
 
 /**
  * Construit l'application Express, séparée du serveur HTTP/Socket.IO pour
@@ -19,6 +21,8 @@ export function createApp() {
   app.use('/api/auth', authRouter);
   app.use('/api/auth/oauth', oauthRouter);
   app.use('/api/me', profileRouter);
+  app.use('/api/races', racesRouter);
+  app.use('/api/avatars', avatarsRouter);
 
   return app;
 }

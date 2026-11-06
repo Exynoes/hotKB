@@ -260,6 +260,14 @@ describe('course (COURSE-01 à 11, BOT, RES-05, HIST-01)', () => {
     const hist = await request(app).get('/api/me/history?page=1&pageSize=5').set('Authorization', `Bearer ${user.token}`);
     expect(hist.body.total).toBe(1);
     expect(hist.body.items[0].raceId).toBe(results.raceId);
+
+    // HIST-02 : détail réservé aux participants
+    const detail = await request(app).get(`/api/races/${results.raceId}`).set('Authorization', `Bearer ${user.token}`);
+    expect(detail.status).toBe(200);
+    expect(detail.body.text).toBe(start.text);
+    const outsider = await registerUser('out');
+    const denied = await request(app).get(`/api/races/${results.raceId}`).set('Authorization', `Bearer ${outsider.token}`);
+    expect(denied.status).toBe(404);
   }, 30000);
 
   it('abandon : le coureur qui abandonne est classé après ceux qui terminent (COURSE-07, COURSE-10)', async () => {
