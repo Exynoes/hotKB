@@ -2,6 +2,7 @@ import { pathToFileURL } from 'node:url';
 import bcrypt from 'bcrypt';
 import { eq, sql } from 'drizzle-orm';
 import { db, pool } from './db.js';
+import { classifyText } from './race/text.js';
 import { personalBests, raceResults, races, roomParticipants, rooms, textes, users } from './schema.js';
 
 /**
@@ -33,22 +34,61 @@ const CORPUS: { language: 'fr' | 'en'; content: string }[] = [
     content:
       'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.',
   },
+  {
+    language: 'fr',
+    content:
+      "La Cigale, ayant chanté tout l'été, se trouva fort dépourvue quand la bise fut venue. Pas un seul petit morceau de mouche ou de vermisseau. Elle alla crier famine chez la Fourmi sa voisine, la priant de lui prêter quelque grain pour subsister jusqu'à la saison nouvelle.",
+  },
+  {
+    language: 'fr',
+    content:
+      "Rien ne sert de courir ; il faut partir à point. Le Lièvre et la Tortue en sont un témoignage. Gageons, dit celle-ci, que vous n'atteindrez point sitôt que moi ce but. Sitôt ? Êtes-vous sage ? Repartit l'animal léger : ma commère, il vous faut purger avec quatre grains d'ellébore.",
+  },
+  {
+    language: 'fr',
+    content:
+      "Il était une fois une petite fille de village, la plus jolie qu'on eût su voir. Sa mère en était folle, et sa mère-grand plus folle encore. Cette bonne femme lui fit faire un petit chaperon rouge, qui lui seyait si bien que partout on l'appelait le Petit Chaperon rouge.",
+  },
+  {
+    language: 'en',
+    content:
+      "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.",
+  },
+  {
+    language: 'en',
+    content:
+      "Dorothy lived in the midst of the great Kansas prairies, with Uncle Henry, who was a farmer, and Aunt Em, who was the farmer's wife. Their house was small, for the lumber to build it had to be carried by wagon many miles.",
+  },
+  {
+    language: 'en',
+    content:
+      "Call me Ishmael. Some years ago, never mind how long precisely, having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.",
+  },
 ];
 
 export async function seed() {
   // 1. Corpus de textes
-  const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(textes);
-  if (count === 0) {
-    await db.insert(textes).values(
-      CORPUS.map((t) => ({
+  // Insère les passages absents (par contenu) et classe chacun selon des critères mesurables (CONF-05).
+  const existing = await db.select({ id: textes.id, content: textes.content, complexity: textes.complexity }).from(textes);
+  const known = new Map(existing.map((e) => [e.content, e]));
+  let inserted = 0;
+  for (const t of CORPUS) {
+    const complexity = classifyText(t.content);
+    const row = known.get(t.content);
+    if (!row) {
+      await db.insert(textes).values({
         content: t.content,
         language: t.language,
         length: t.content.split(/\s+/).length,
         containsAccents: /[àâäçéèêëîïôöùûüÿ]/i.test(t.content),
-      })),
-    );
-    console.log(`[seed] ${CORPUS.length} textes insérés`);
+        complexity,
+      });
+      inserted++;
+    } else if (row.complexity !== complexity) {
+      await db.update(textes).set({ complexity }).where(eq(textes.id, row.id));
+    }
   }
+  if (inserted) console.log(`[seed] ${inserted} textes insérés`);
 
   // 2. Compte de démonstration
   let [demo] = await db.select().from(users).where(eq(users.username, DEMO_USERNAME));
@@ -78,11 +118,11 @@ export async function seed() {
       const code = `D${String(i + 1).padStart(2, '0')}EMO`;
       const [room] = await db
         .insert(rooms)
-        .values({ code, visibility: 'open', hostUserId: demo.id, status: 'resultats' })
+        .values({ code, visibility: 'open', hostUserId: demo.id, status: 'fermee' })
         .returning();
       const [participant] = await db
         .insert(roomParticipants)
-        .values({ roomId: room.id, userId: demo.id })
+        .values({ roomId: room.id, userId: demo.id, leftAt: new Date() })
         .returning();
       const [race] = await db
         .insert(races)

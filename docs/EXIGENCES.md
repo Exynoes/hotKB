@@ -1,6 +1,6 @@
 # Matrice de traçabilité des exigences — HotKB
 
-Chaque exigence de l'énoncé (identifiants officiels) avec son **statut honnête**, les fichiers principaux, les tests associés et les notes de choix. Version initiale du **checkpoint #1** ; mise à jour à chaque étape.
+Chaque exigence de l'énoncé (identifiants officiels) avec son **statut honnête**, les fichiers principaux, les tests associés et les notes de choix. Version de la **livraison finale**.
 
 Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « complet » sans être fonctionnel et vérifié.
 
@@ -19,10 +19,10 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | TECH-01 | complet | `client/src/app/`, `server/src/index.ts` | e2e | Next.js 16, App Router, React 19 |
 | TECH-02 | complet | `client/tsconfig.json`, `server/tsconfig.json`, `client/.oxlintrc.json` | CI (`tsc --noEmit`) | `strict: true` partout, aucun `.js`/`.jsx`, règle `no-explicit-any` en erreur. Fichiers de config en `.ts`/`.json` |
 | TECH-03 | complet | `client/src/app/globals.css`, `client/postcss.config.json` | — | Tailwind CSS v4 |
-| TECH-04 | complet | `server/src/schema.ts`, `server/migrations/`, `server/src/seed.ts` | `server/test/seed.test.ts` | Drizzle + migrations versionnées ; seed idempotent : 4 textes (FR/EN), compte `demo`, historique |
+| TECH-04 | complet | `server/src/schema.ts`, `server/migrations/`, `server/src/seed.ts` | `server/test/seed.test.ts` | Drizzle + migrations versionnées ; seed idempotent : 10 textes (FR/EN) classés par complexité, compte `demo`, historique |
 | TECH-05 | partiel | `render.yaml` | `/api/health` | En ligne en HTTPS et fonctionnel, mais sur une plateforme (Render), pas un VPS — voir choix ci-dessus |
-| TECH-06 | partiel | `server/src/index.ts`, `server/src/rooms/handlers.ts` | e2e (lobby) | WebSocket (Socket.IO) : lobby en temps réel. La progression pendant une course n'existe pas encore |
-| TECH-07 | partiel | `server/src/schemas.ts` | `server/test/schemas.test.ts`, `auth.test.ts` | Zod sur toutes les routes d'auth et les messages existants ; à étendre aux futurs messages de course |
+| TECH-06 | complet | `server/src/realtime.ts`, `server/src/rooms/` | `room-flow.test.ts`, e2e | Socket.IO : salle, réglages, piste en direct (~5 mises à jour/s), bonus, résultats |
+| TECH-07 | complet | `server/src/schemas.ts`, `server/src/race/settings.ts` | `schemas.test.ts`, `room-flow.test.ts` | Zod sur les routes REST, tous les messages Socket.IO et la configuration de course |
 | TECH-08 | complet | `render.yaml` | — | Render gratuit ; OAuth Discord/GitHub gratuits |
 | TECH-09 | complet | `.github/workflows/ci.yml` | CI verte | Lint, `tsc --noEmit` (client et serveur), tests unitaires, build, e2e |
 | TECH-10 | complet | `server/.env.example` | — | Toutes les variables documentées ; aucun secret versionné |
@@ -34,89 +34,106 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | DES-01 | complet | `docs/DEMARCHE-CREATIVE.md` | — | Nom « HotKB » trouvé par l'auteur (patate chaude + clavier chaud + initiales de *keyboard*). Vérification d'originalité faite après coup : « Hot Keyboard » (logiciel de macros Windows) est proche mais d'une autre catégorie ; l'enseignant a confirmé le 6 octobre 2026 (Discord) que le nom est accepté |
 | DES-02 | complet | `docs/DEMARCHE-CREATIVE.md`, `docs/demarche-creative/`, `client/public/logo.png` | — | Concept, croquis et assemblage de l'auteur ; flamme issue de la bibliothèque Canva et touches K/B rendues avec l'aide d'un outil d'IA (détaillé dans la démarche créative). L'enseignant a confirmé qu'un croquis de l'auteur suffit |
 | DES-03 | partiel | `docs/DEMARCHE-CREATIVE.md` | — | Palette, typographies et moodboard de 4 références documentés ; il reste à ajouter les commentaires personnels de l'auteur sur chaque référence |
-| DES-04 | partiel | `RaceTrack.tsx`, `TypingDemo.tsx`, `Lobby.tsx`, `FlameBackground.tsx` | e2e | Palette chaude personnalisée, aucun composant shadcn, aucun emoji en guise d'icône. Piste de progression en élément signature : version animée sur l'accueil ; reliée aux vraies courses plus tard |
+| DES-04 | complet | `LiveTrack.tsx`, `RaceTrack.tsx`, `TypingDemo.tsx`, `FlameBackground.tsx` | e2e | Palette chaude personnalisée, aucun composant shadcn, aucun emoji en guise d'icône. Élément signature : la piste de course, animée sur l'accueil et reliée aux vraies courses (`LiveTrack`) |
 | DES-05 | complet | `client/src/app/layout.tsx`, `client/src/lib/theme.tsx` | e2e | Sélecteur, préférence système par défaut, script avant rendu : aucun flash du mauvais thème |
-| DES-06 | partiel | `client/src/components/` | vérifié à 360 px (pas de débordement horizontal) | Message « clavier physique » sur mobile à faire avec la course |
+| DES-06 | complet | `client/src/components/`, `RaceScreen.tsx` | vérifié à 360 px | Mise en page adaptative ; sur écran tactile, la course affiche un message demandant un clavier |
 
 ## Comptes et profil
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| AUTH-01 | partiel | `server/src/routes/auth.ts`, `server/src/routes/oauth.ts`, `AuthPanel.tsx` | `auth.test.ts`, `oauth.test.ts`, `AuthPanel.test.tsx`, e2e | Compte local complet. OAuth Discord et GitHub implémentés et testés (réponses des fournisseurs simulées), mais non activés en production tant que les applications OAuth n'ont pas été créées chez les fournisseurs |
-| AUTH-02 | partiel | `server/src/routes/auth.ts` | `schemas.test.ts` | Pseudonyme de 3 à 20 caractères ; session par JWT (non par cookie signé) |
-| AUTH-03 | partiel | `server/src/rooms/handlers.ts`, `HomeView.tsx` | e2e | Invité refusé à la création de salle (interface et serveur), sans historique persistant. Avatar généré non fait |
-| AUTH-04 | non fait | — | — | Téléversement de photo de profil |
-| AUTH-05 | non fait | — | — | Modification du pseudonyme |
-| AUTH-06 | partiel | `server/src/routes/profile.ts`, `client/src/components/ProfileView.tsx` | `server/test/profile.test.ts`, `client/test/ProfileView.test.tsx`, e2e | Page `/profile` : meilleur/moyen MPM, précision, courses, victoires, courbe de progression. Sans photo ni pseudonyme éditable (AUTH-04/05) |
+| AUTH-01 | partiel | `routes/auth.ts`, `routes/oauth.ts`, `AuthPanel.tsx` | `auth.test.ts`, `oauth.test.ts`, e2e | Compte local complet. OAuth Discord et GitHub implémentés et testés (réponses simulées), **non activés en production** : les applications OAuth n'ont pas été créées chez les fournisseurs |
+| AUTH-02 | complet | `routes/auth.ts` | `schemas.test.ts` | Pseudonyme de 3 à 20 caractères ; session par JWT (pas de cookie signé, voir les choix) |
+| AUTH-03 | complet | `rooms/manager.ts`, `HomeView.tsx` | `room-flow.test.ts`, e2e | Invité : peut rejoindre et jouer, ne peut pas créer de salle (interface et serveur) ; résultats stockés pour la course mais pas d'historique d'invité. Avatar : initiale colorée |
+| AUTH-04 | complet | `routes/profile.ts`, `routes/avatars.ts`, `ProfileView.tsx` | `profile-edit.test.ts` | Photo ≤ 2 Mo (PNG/JPEG/WebP), contrôle de la signature du fichier, redimensionnée en 256×256 WebP côté serveur, stockée en base |
+| AUTH-05 | complet | `routes/profile.ts`, `ProfileView.tsx` | `profile-edit.test.ts` | Nom affiché de 2 à 20 caractères, distinct du nom de connexion ; utilisé dans les salles et résultats |
+| AUTH-06 | complet | `routes/profile.ts`, `ProfileView.tsx` | `profile.test.ts`, `ProfileView.test.tsx`, e2e | Meilleur/moyen MPM, précision, courses, victoires, courbe de progression ; les abandons sont exclus des moyennes |
 
 ## Salles et visibilité
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| SALLE-01 | partiel | `server/src/rooms/handlers.ts` | e2e | Création, l'utilisateur devient hôte. Choix participant/spectateur non fait |
-| SALLE-02 | complet | `server/src/rooms/code.ts` | `code.test.ts`, e2e | 6 caractères alphanumériques, sans 0/O/1/I/L |
-| SALLE-03 | non fait | — | — | Visibilités publique / sur code / privée (aujourd'hui, toute salle est accessible par code) |
-| SALLE-04 | non fait | — | — | Liens d'invitation à usage unique |
-| SALLE-05 | non fait | — | — | Capacité maximale configurable |
-| SALLE-06 | non fait | — | — | Une seule salle à la fois, garantie en base |
-| SALLE-07 | non fait | — | — | Expulsion |
-| SALLE-08 | partiel | `server/src/rooms/handlers.ts` | — | L'hôte passe au participant restant le plus ancien ; salle supprimée si vide. Pas de distinction connecté/invité ni de fermeture persistée |
-| SALLE-09 | partiel | `server/src/rooms/handlers.ts` | — | Refus de rejoindre une course commencée ; l'écran de résultats n'existe pas encore |
-| SALLE-10 | complet | `server/src/rooms/rateLimit.ts` | `rateLimit.test.ts` | 10 tentatives par minute et par IP |
+| SALLE-01 | complet | `rooms/manager.ts`, `Lobby.tsx` | `room-flow.test.ts` | Création par un compte (hôte) ; chacun choisit participant ou spectateur |
+| SALLE-02 | complet | `rooms/code.ts` | `code.test.ts`, e2e | 6 caractères, sans 0/O/1/I/L |
+| SALLE-03 | complet | `race/settings.ts`, `Lobby.tsx` | `room-flow.test.ts` | Publique, sur code, sur invitation |
+| SALLE-04 | complet | `rooms/manager.ts`, `JoinView.tsx` | `room-flow.test.ts` | Lien à usage unique, jeton aléatoire de 24 octets, seul son hachage SHA-256 est stocké, lié à la personne et à son IP, révocable |
+| SALLE-05 | complet | `race/settings.ts` | `room-flow.test.ts` | Capacité de 2 à 30, vérifiée côté serveur |
+| SALLE-06 | complet | `migrations/003_course.sql`, `rooms/manager.ts` | `room-flow.test.ts` | Une seule salle active par personne, garantie par un index unique en base ; un second onglet reprend la même salle |
+| SALLE-07 | complet | `rooms/manager.ts` | `room-flow.test.ts` | L'hôte expulse ; un lien utilisé par la personne expulsée est révoqué |
+| SALLE-08 | complet | `rooms/manager.ts` | `room-flow.test.ts` | L'hôte passe à la personne connectée présente depuis le plus longtemps ; la salle se ferme sans humain |
+| SALLE-09 | complet | `rooms/manager.ts`, `HomeView.tsx` | `room-flow.test.ts` | Entrée refusée pendant une course ; écran de résultats puis rejouer, retour à la salle ou fermeture |
+| SALLE-10 | complet | `rooms/rateLimit.ts` | `rateLimit.test.ts` | 10 tentatives par minute et par IP |
 
 ## Rejoindre une course
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| JOIN-01 | complet | `HomeView.tsx`, `handlers.ts` | e2e | Champ de code dès la page d'accueil |
-| JOIN-02 | non fait | — | — | Explorateur de salles publiques |
-| JOIN-03 | non fait | — | — | Bouton « Faire une course » |
+| JOIN-01 | complet | `HomeView.tsx` | e2e | Champ de code dès l'accueil |
+| JOIN-02 | complet | `Explorer.tsx`, `rooms/manager.ts` | `room-flow.test.ts`, e2e | Salles publiques, mises à jour en direct |
+| JOIN-03 | complet | `HomeView.tsx`, `rooms/manager.ts` | `room-flow.test.ts` | « Course rapide » ; message clair s'il n'y a aucune salle |
 
-## Configuration de la course (CONF-01 à CONF-12)
+## Configuration de la course
 
 | ID | Statut | Notes |
 |---|---|---|
-| CONF-01 à CONF-12 | non fait | Configuration de l'hôte (temps, langue, type, longueur, complexité, options, erreurs, bonus, bots, visibilité, diffusion en temps réel) — prévu avec le gameplay de course |
+| CONF-01 à CONF-12 | complet | Temps, langue du texte, type (cohérent/aléatoire), nombre de mots, complexité, options (ponctuation, chiffres, majuscules, accents), caractères inclus/exclus, mode d'erreur, bonus, bots, visibilité ; modifiable par l'hôte seul et diffusé en direct (`SettingsPanel` dans `Lobby.tsx`, validation Zod dans `race/settings.ts`). **Limite connue** : le classement automatique de la complexité des textes du corpus donne « facile » (anglais) et « moyen » (français) ; si aucun passage ne correspond, un autre passage de la langue est choisi |
 
 ## Déroulement d'une course
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| COURSE-01 | partiel | `server/src/rooms/handlers.ts`, `docs/ARCHITECTURE.md` | — | Machine à états documentée ; implémentés : `EN_ATTENTE` → `EN_COURSE`. `DECOMPTE`, `RESULTATS`, `FERMEE` à faire |
-| COURSE-02 | complet | `handlers.ts` | `Lobby.test.tsx`, e2e | Minimum 2 participants, hôte seulement, vérifié côté serveur (les bots n'existent pas encore) |
-| COURSE-03 à COURSE-11 | non fait | — | — | Décompte, zone de frappe, piste en temps réel, serveur autoritaire, abandon, déconnexion, fin et classement, relance/fermeture |
+| COURSE-01 | complet | `rooms/manager.ts`, `docs/ARCHITECTURE.md` | `room-flow.test.ts` | `EN_ATTENTE` → `DECOMPTE` → `EN_COURSE` → `RESULTATS` → `FERMEE` |
+| COURSE-02 | complet | `rooms/manager.ts`, `Lobby.tsx` | `room-flow.test.ts`, `Lobby.test.tsx` | Au moins deux coureurs (bots compris), hôte seulement |
+| COURSE-03 | complet | `rooms/manager.ts`, `RaceScreen.tsx` | `room-flow.test.ts` | Décompte synchronisé sur l'horloge du serveur ; le texte n'arrive qu'avec le décompte ; frappes avant le départ ignorées |
+| COURSE-04 | complet | `RaceScreen.tsx` | `RaceScreen.test.tsx`, e2e | Lettres validées, courantes, fautives colorées (inspiré de Monkeytype) |
+| COURSE-05 | complet | `RaceScreen.tsx`, `LiveTrack.tsx` | `room-flow.test.ts` | Spectateurs : piste sans texte |
+| COURSE-06 | complet | `race/engine.ts` | `race-engine.test.ts`, `room-flow.test.ts` | Le serveur rejoue les frappes contre le texte et plafonne la vitesse (25 frappes/s) : la progression envoyée par le client n'est jamais crue |
+| COURSE-07 | complet | `rooms/manager.ts`, `RaceScreen.tsx` | `room-flow.test.ts` | Abandon avec confirmation dans la page |
+| COURSE-08 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Déconnexion de plus de 30 s = abandon ; retour rapide = reprise |
+| COURSE-09 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Fin quand tous ont fini ou à la fin du temps ; **les bots continuent après l'arrivée des humains**, la course se termine quand tous ont fini |
+| COURSE-10 | complet | `race/engine.ts` | `race-engine.test.ts` | Terminés (par temps), puis temps écoulé (par progression), puis abandons |
+| COURSE-11 | complet | `rooms/manager.ts`, `HomeView.tsx` | `room-flow.test.ts` | Rejouer, retour à la salle, fermer |
 
 ## Bots, bonus, résultats, historique
 
-| ID | Statut | Notes |
-|---|---|---|
-| BOT-01 à BOT-05 | non fait | Approche prévue dans `ARCHITECTURE.md` (moteur côté serveur, déterministe par graine) |
-| BONUS-01 à BONUS-04 | non fait | — |
-| RES-01 à RES-05 | non fait | Tables `race_result`, `personal_best`, `key_error_stat` déjà créées (migration 001) |
-| HIST-01 | partiel | Historique paginé (`GET /api/me/history`) affiché sur `/profile` ; se remplira quand la course sera jouable |
-| HIST-02 | non fait | Page de résultats détaillés d'une course |
+| ID | Statut | Fichiers principaux | Tests | Notes |
+|---|---|---|---|---|
+| BOT-01 à BOT-05 | complet | `race/bots.ts` | `race-bots.test.ts`, e2e | Cinq niveaux (de 10–20 à 140–170 MPM), erreurs réalistes, ajout/retrait par l'hôte, simulation déterministe par graine côté serveur |
+| BONUS-01 à BONUS-04 | complet | `race/bonus.ts`, `RaceScreen.tsx` | `race-bonus.test.ts` | Bonus de remontée à 25/50/75 % pour les coureurs en retard : −3 mots, +3 mots ou brouillard ; maximum 3 par bénéficiaire ; annonce visible |
+| RES-01 à RES-05 | complet | `ResultsView.tsx`, `rooms/persist.ts` | `ResultsView` dans `RaceScreen.test.tsx`, `room-flow.test.ts`, e2e | Podium, tableau (MPM net/brut, précision, erreurs, temps), courbe de MPM, clavier des touches ratées, badge de record personnel (calculé à partir de l'historique) |
+| HIST-01 | complet | `routes/profile.ts`, `ProfileView.tsx` | `profile.test.ts` | Historique paginé |
+| HIST-02 | complet | `routes/races.ts`, `ResultsPage.tsx` | `room-flow.test.ts` | Détail d'une course, réservé aux participants (404 sinon) |
 
 ## Internationalisation
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| I18N-01 | partiel | `client/src/lib/i18n.tsx` | `Lobby.test.tsx`, `AuthPanel.test.tsx`, e2e | Tous les textes de l'interface existante en FR et EN. Les métadonnées de page (titre, description) sont uniquement en français ; messages d'erreur du serveur en français |
-| I18N-02 | complet | `TopBar.tsx`, `i18n.tsx` | e2e | Sélecteur sur la page ; choix conservé (localStorage) ; langue du navigateur par défaut |
-| I18N-03 | non fait | — | — | Aucune date ni nombre affiché pour l'instant |
+| I18N-01 | partiel | `lib/i18n.tsx`, `lib/i18n-race.ts` | `Lobby.test.tsx`, e2e | Interface entièrement FR/EN ; le serveur n'envoie que des codes d'erreur pour les salles, traduits côté client. **Reste** : les messages d'erreur des routes REST d'authentification et les métadonnées de page sont en français |
+| I18N-02 | complet | `TopBar.tsx`, `i18n.tsx` | e2e | Sélecteur, mémorisé, langue du navigateur par défaut |
+| I18N-03 | partiel | `ProfileView.tsx` | — | Dates formatées selon la langue ; les nombres décimaux ne sont pas localisés |
 
 ## Qualité
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| TEST-01 | partiel | `server/test/`, `client/test/` | 26 serveur + 10 client | Logique existante couverte ; la logique de course reste à écrire (donc à tester) |
-| TEST-02 | partiel | `e2e/lobby.spec.ts`, `playwright.config.ts` | e2e (2 scénarios) | Playwright en CI : lobby, langue, thème. Parcours de course à ajouter |
-| TEST-03 | complet | `e2e/lobby.spec.ts` | e2e | Les tests de bout en bout passent par nom d'utilisateur et mot de passe |
-| PERF-01 | non fait | — | — | Lighthouse non mesuré |
-| PERF-02, PERF-03 | non fait | — | — | Concernent la piste de progression ; stratégie décrite dans l'ADR-001 |
-| A11Y-01 | partiel | `globals.css` | — | Palette choisie avec contraste soigné, non mesuré formellement (WCAG AA) |
-| A11Y-02 | partiel | `layout.tsx`, `HomeView.tsx` | — | `<main>`, un `<h1>`, `<button>` pour les actions. `<header>`, `<nav>` et `<footer>` à ajouter |
-| A11Y-03 | partiel | `AuthPanel.tsx` | — | Boutons étiquetés ; champs de formulaire identifiés par un `placeholder`, pas encore par un `<label>` |
-| A11Y-04 | partiel | — | — | Navigation clavier native des éléments ; indicateur de focus personnalisé à faire |
-| SEC-01 | complet | `handlers.ts` | — | Démarrage réservé à l'hôte, vérifié côté serveur (autres actions : à venir) |
-| SEC-02 | non fait | — | — | Pas de téléversement pour l'instant |
+| TEST-01 | complet | `server/test/`, `client/test/` | 80 serveur + 16 client | Moteur de frappe, bots, bonus, textes, salles, profil |
+| TEST-02 | complet | `e2e/`, `playwright.config.ts` | e2e (4 scénarios) | Lobby, langue/thème, profil, course complète contre un bot |
+| TEST-03 | complet | `e2e/` | e2e | Connexion par nom d'utilisateur et mot de passe |
+| PERF-01 | à vérifier | — | — | Lighthouse : voir `docs/QUALITE.md` pour la mesure |
+| PERF-02 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Frappes groupées (≈ 12 messages/s au plus), diffusion de la piste ≈ 5 fois/s, jamais une émission par frappe |
+| PERF-03 | complet | `LiveTrack.tsx` | — | Transition CSS de 200 ms entre deux mesures, aucune mise à jour par image |
+| A11Y-01 | partiel | `globals.css` | — | Palette soignée, contraste non mesuré formellement |
+| A11Y-02 | partiel | `layout.tsx` | — | `<main>`, un `<h1>` par page ; `<header>`, `<nav>`, `<footer>` à compléter |
+| A11Y-03 | partiel | `Lobby.tsx`, `AuthPanel.tsx` | — | Réglages et profil avec `<label>` ; formulaire de connexion encore avec `placeholder` |
+| A11Y-04 | partiel | — | — | Navigation clavier native ; zone de frappe focalisable (`tabIndex`) |
+| SEC-01 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Toutes les actions d'hôte vérifiées côté serveur |
+| SEC-02 | complet | `routes/profile.ts` | `profile-edit.test.ts` | Téléversement : taille limitée, signature de fichier, ré-encodage par `sharp` (le fichier d'origine n'est jamais servi) |
 | SEC-03 | complet | `routes/auth.ts` | `auth.test.ts` | bcrypt ; jamais stocké ni journalisé en clair |
+
+## Écarts connus (honnêtes)
+
+- Hébergement sur Render (gratuit) et non un VPS ; démarrage à froid d'environ 50 s.
+- OAuth non activé en production.
+- La table `personal_best` existe mais n'est pas utilisée : les records sont calculés à partir de `race_result`.
+- Pas d'historique pour les invités.
+- Les bots continuent de taper après l'arrivée des humains.

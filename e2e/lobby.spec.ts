@@ -31,7 +31,7 @@ test('un compte crée une salle, un invité la rejoint par code (TEST-03, SALLE-
   await expect(guest.getByText('Connecte-toi avec un compte pour créer une salle.')).toBeVisible();
   await expect(guest.getByRole('button', { name: 'Créer une salle', exact: true })).toHaveCount(0);
   await guest.getByPlaceholder('Code de la salle').fill(code);
-  await guest.getByRole('button', { name: 'Rejoindre' }).click();
+  await guest.getByRole('button', { name: 'Rejoindre', exact: true }).click();
 
   // Mise à jour en temps réel chez l'hôte, puis démarrage possible (COURSE-02)
   await expect(host.getByText('Invite')).toBeVisible();

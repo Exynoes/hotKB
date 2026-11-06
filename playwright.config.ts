@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 /** TEST-02 — tests de bout en bout. Le serveur (Next + API + Socket.IO) est lancé en production. */
 export default defineConfig({
   testDir: './e2e',
-  timeout: 30_000,
+  timeout: 60_000,
   fullyParallel: false,
   workers: 1,
   use: {

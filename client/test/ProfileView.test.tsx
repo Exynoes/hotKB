@@ -40,6 +40,7 @@ describe('ProfileView', () => {
             }
           : {
               username: 'demo',
+              displayName: 'demo',
               avatarUrl: null,
               stats: { races: 1, wins: 1, bestWpm: 55, avgWpm: 55, avgAccuracy: 97 },
               progression: [{ date: '2026-10-01T12:00:00Z', wpm: 55 }],

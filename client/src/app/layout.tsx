@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
 import Providers from './providers';
+import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
   title: 'HotKB — Courses de dactylographie',
@@ -31,7 +32,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

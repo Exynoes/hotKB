@@ -31,6 +31,27 @@ export const joinRoomSchema = z.object({
     .regex(/^[A-Z0-9]{6}$/, 'Code de salle invalide.'),
 });
 
+const role = z.enum(['player', 'spectator']);
+
+/** Messages temps réel de salle et de course (TECH-07) — chaque message entrant est validé avant tout traitement. */
+export const createRoomSchema = z
+  .object({ settings: z.record(z.string(), z.unknown()).optional(), role: role.optional() })
+  .optional()
+  .default({});
+
+export const joinAnySchema = z
+  .object({
+    code: z.string().trim().toUpperCase().regex(/^[A-Z0-9]{6}$/).optional(),
+    token: z.string().min(16).max(64).regex(/^[A-Za-z0-9_-]+$/).optional(),
+    role: role.optional(),
+  })
+  .refine((v) => v.code || v.token, { message: 'Code ou lien requis.' });
+
+export const roleSchema = z.object({ role });
+export const botSchema = z.object({ level: z.enum(['noob', 'debutant', 'intermediaire', 'expert', 'impossible']) });
+export const idSchema = z.object({ id: z.string().min(1).max(64) });
+export const keysSchema = z.object({ keys: z.string().min(1).max(64) });
+
 export function firstError(error: z.ZodError): string {
   return error.issues[0]?.message ?? 'Données invalides.';
 }
