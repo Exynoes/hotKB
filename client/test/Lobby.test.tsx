@@ -1,68 +1,68 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import Lobby from '../src/components/Lobby';
+import { fireEvent, render, screen } from '@testing-library/react';
+import Lobby, { type LobbyActions } from '../src/components/Lobby';
 import { LangProvider } from '../src/lib/i18n';
-import type { LobbyState } from '../src/lib/room-types';
+import { DEFAULT } from './fixtures';
+import type { Member, RoomState } from '../src/lib/room-types';
 
-const baseRoom: LobbyState = {
+const member = (id: string, name: string, isHost = false): Member => ({
+  id, name, kind: 'user', role: 'player', isHost, botLevel: null, avatarUrl: null, connected: true,
+});
+
+const baseRoom: RoomState = {
   code: 'ABCDE',
   status: 'en_attente',
-  participants: [
-    { id: 'p1', displayName: 'Camille', isHost: true },
-    { id: 'p2', displayName: 'Nathan', isHost: false },
-  ],
+  settings: DEFAULT,
+  members: [member('p1', 'Camille', true), member('p2', 'Nathan')],
 };
 
-function renderLobby(props: Parameters<typeof Lobby>[0]) {
-  return render(
+const actions = (): LobbyActions => ({
+  onStart: vi.fn(), onLeave: vi.fn(), onClose: vi.fn(), onSettings: vi.fn(), onRole: vi.fn(),
+  onAddBot: vi.fn(), onRemoveBot: vi.fn(), onKick: vi.fn(), onInvite: vi.fn(), onRevoke: vi.fn(),
+});
+
+function renderLobby(room: RoomState, myId: string, a = actions()) {
+  render(
     <LangProvider>
-      <Lobby {...props} />
+      <Lobby room={room} myId={myId} invites={[]} error={null} actions={a} />
     </LangProvider>,
   );
+  return a;
 }
 
-beforeEach(() => {
-  localStorage.setItem('hotkb:lang', 'fr');
-});
+beforeEach(() => localStorage.setItem('hotkb:lang', 'fr'));
 
 describe('Lobby', () => {
   it('affiche le code de la salle et les participants', () => {
-    renderLobby({ room: baseRoom, myId: 'p2', onStart: vi.fn(), onLeave: vi.fn() });
-
+    renderLobby(baseRoom, 'p2');
     expect(screen.getByLabelText('ABCDE')).toBeInTheDocument();
     expect(screen.getByText('Camille')).toBeInTheDocument();
-    expect(screen.getByText(/Nathan/)).toBeInTheDocument();
+    expect(screen.getByText(/Nathan.*\(toi\)/)).toBeInTheDocument();
     expect(screen.getByText('HÔTE')).toBeInTheDocument();
   });
 
-  it('identifie le joueur courant avec « (toi) »', () => {
-    renderLobby({ room: baseRoom, myId: 'p2', onStart: vi.fn(), onLeave: vi.fn() });
-    expect(screen.getByText(/Nathan.*\(toi\)/)).toBeInTheDocument();
-  });
-
-  it("ne montre le bouton « Démarrer » qu'à l'hôte", () => {
-    const { rerender } = renderLobby({
-      room: baseRoom,
-      myId: 'p2',
-      onStart: vi.fn(),
-      onLeave: vi.fn(),
-    });
+  it("ne montre « Démarrer » et les réglages modifiables qu'à l'hôte (CONF-12)", () => {
+    renderLobby(baseRoom, 'p2');
     expect(screen.queryByText('Démarrer la course')).not.toBeInTheDocument();
-
-    rerender(
-      <LangProvider>
-        <Lobby room={baseRoom} myId="p1" onStart={vi.fn()} onLeave={vi.fn()} />
-      </LangProvider>,
-    );
-    expect(screen.getByText('Démarrer la course')).toBeEnabled();
+    expect(screen.getByLabelText('Nombre de mots')).toBeDisabled();
   });
 
-  it('désactive « Démarrer » avec un seul joueur (COURSE-1)', () => {
-    const soloRoom: LobbyState = {
-      ...baseRoom,
-      participants: [{ id: 'p1', displayName: 'Camille', isHost: true }],
-    };
-    renderLobby({ room: soloRoom, myId: 'p1', onStart: vi.fn(), onLeave: vi.fn() });
+  it("l'hôte modifie un réglage et démarre", () => {
+    const a = renderLobby(baseRoom, 'p1');
+    fireEvent.change(screen.getByLabelText('Difficulté'), { target: { value: 'hard' } });
+    expect(a.onSettings).toHaveBeenCalledWith({ complexity: 'hard' });
+    fireEvent.click(screen.getByText('Démarrer la course'));
+    expect(a.onStart).toHaveBeenCalled();
+  });
+
+  it('désactive « Démarrer » avec un seul coureur', () => {
+    renderLobby({ ...baseRoom, members: [member('p1', 'Camille', true)] }, 'p1');
     expect(screen.getByText('Démarrer la course')).toBeDisabled();
+  });
+
+  it("l'hôte peut ajouter un bot", () => {
+    const a = renderLobby(baseRoom, 'p1');
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter un bot' }));
+    expect(a.onAddBot).toHaveBeenCalledWith('debutant');
   });
 });

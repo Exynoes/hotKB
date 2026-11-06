@@ -1,5 +1,6 @@
 'use client';
 
+import { raceEn, raceFr } from './i18n-race';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 export type Lang = 'fr' | 'en';
@@ -58,6 +59,7 @@ const dict = {
     next: 'Suivant',
     loading: 'Chargement…',
     oauthFailed: 'La connexion externe a échoué. Réessaie.',
+    ...raceFr,
   },
   en: {
     tagline:
@@ -111,6 +113,7 @@ const dict = {
     next: 'Next',
     loading: 'Loading…',
     oauthFailed: 'External sign-in failed. Please try again.',
+    ...raceEn,
   },
 } as const;
 
