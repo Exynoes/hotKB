@@ -25,6 +25,8 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
   const [pos, setPos] = useState(race.pos);
   const [wrong, setWrong] = useState<Set<number>>(new Set());
   const [flash, setFlash] = useState(false);
+  const [stuck, setStuck] = useState(false); // faute en attente de correction (mode « corriger »)
+  const [mistakes, setMistakes] = useState(0);
   const [confirm, setConfirm] = useState(false);
   const [coarse, setCoarse] = useState(false);
   const buffer = useRef('');
@@ -71,9 +73,12 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
       if (e.key === text[p]) {
         posRef.current = p + 1;
         setPos(p + 1);
+        setStuck(false);
       } else {
         setFlash(true);
-        setTimeout(() => setFlash(false), 120);
+        setTimeout(() => setFlash(false), 250);
+        setMistakes((m) => m + 1);
+        setStuck(true);
         if (room.settings.errorMode === 'free') {
           posRef.current = p + 1;
           setPos(p + 1);
@@ -167,15 +172,16 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
             const done = i < pos;
             const bad = wrong.has(i);
             const current = i === pos;
+            const pending = current && stuck;
             return (
               <span
                 key={i}
                 data-state={bad ? 'wrong' : done ? 'done' : current ? 'current' : 'todo'}
                 style={{
-                  color: bad ? 'var(--danger)' : done ? 'var(--fg)' : 'var(--muted)',
+                  color: bad || pending ? 'var(--danger)' : done ? 'var(--fg)' : 'var(--muted)',
                   opacity: done || bad ? 1 : 0.65,
-                  borderBottom: current ? '3px solid var(--accent)' : '3px solid transparent',
-                  background: bad ? 'color-mix(in srgb, var(--danger) 15%, transparent)' : undefined,
+                  borderBottom: current ? `3px solid ${pending ? 'var(--danger)' : 'var(--accent)'}` : '3px solid transparent',
+                  background: bad || pending ? 'color-mix(in srgb, var(--danger) 30%, transparent)' : undefined,
                   whiteSpace: 'pre-wrap',
                 }}
               >
@@ -195,7 +201,7 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
 
       <div className="flex items-center justify-between text-sm font-mono" style={{ color: 'var(--muted)' }}>
         <span>
-          {t('yourSpeed')} : {Math.round(me?.wpm ?? 0)} {t('colWpm')} · {t('accuracy')} : {Math.round(me?.acc ?? 100)}%
+          {t('yourSpeed')} : {Math.round(me?.wpm ?? 0)} {t('colWpm')} · {t('accuracy')} : {Math.round(me?.acc ?? 100)}% · {mistakes} {t('mistakesCount')}
         </span>
         {limitLeft !== null && <span aria-label="time">{limitLeft} {t('seconds')}</span>}
         {isRunner && (me?.st ?? 'en_course') === 'en_course' && (
