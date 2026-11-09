@@ -64,6 +64,22 @@ const CORPUS: { language: 'fr' | 'en'; content: string }[] = [
     content:
       "Call me Ishmael. Some years ago, never mind how long precisely, having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.",
   },
+  {
+    language: 'fr',
+    content:
+      "Les représentants du peuple français, constitués en Assemblée nationale, considérant que l'ignorance, l'oubli ou le mépris des droits de l'homme sont les seules causes des malheurs publics et de la corruption des gouvernements, ont résolu d'exposer, dans une déclaration solennelle, les droits naturels, inaliénables et sacrés de l'homme.",
+  },
+  // textes anglais difficiles rédigés pour le projet (mots longs)
+  {
+    language: 'en',
+    content:
+      "The Constitution of the United States establishes a government of limited, enumerated, and separated powers, guaranteeing fundamental individual liberties, extraordinary responsibilities, and unprecedented representative institutions.",
+  },
+  {
+    language: 'en',
+    content:
+      "Philosophical investigations concerning understanding demonstrate that imagination, experience, and sensibility collaborate mysteriously, producing extraordinary generalizations about consciousness and civilization.",
+  },
 ];
 
 export async function seed() {

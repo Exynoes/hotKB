@@ -7,6 +7,7 @@ import FlameBackground from './FlameBackground';
 import { useAuth } from '../lib/auth';
 import { useLang } from '../lib/i18n';
 import Avatar from './Avatar';
+import { apiMessage } from '../lib/api-message';
 import { profileApi, type HistoryPage, type ProfileData } from '../lib/api';
 
 const card = { background: 'var(--surface)', border: '1px solid var(--border)' } as const;
@@ -57,7 +58,7 @@ function Identity({ profile, token, onChange }: { profile: ProfileData; token: s
       onChange({ ...profile, ...(await fn()) });
       setMsg(t('saved'));
     } catch (e) {
-      setMsg(e instanceof Error ? e.message : t('genericError'));
+      setMsg(e instanceof Error ? apiMessage(e.message, t) : t('genericError'));
     }
   };
   return (

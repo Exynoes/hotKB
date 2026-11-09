@@ -19,7 +19,7 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | TECH-01 | complet | `client/src/app/`, `server/src/index.ts` | e2e | Next.js 16, App Router, React 19 |
 | TECH-02 | complet | `client/tsconfig.json`, `server/tsconfig.json`, `client/.oxlintrc.json` | CI (`tsc --noEmit`) | `strict: true` partout, aucun `.js`/`.jsx`, règle `no-explicit-any` en erreur. Fichiers de config en `.ts`/`.json` |
 | TECH-03 | complet | `client/src/app/globals.css`, `client/postcss.config.json` | — | Tailwind CSS v4 |
-| TECH-04 | complet | `server/src/schema.ts`, `server/migrations/`, `server/src/seed.ts` | `server/test/seed.test.ts` | Drizzle + migrations versionnées ; seed idempotent : 10 textes (FR/EN) classés par complexité, compte `demo`, historique |
+| TECH-04 | complet | `server/src/schema.ts`, `server/migrations/`, `server/src/seed.ts` | `server/test/seed.test.ts` | Drizzle + migrations versionnées ; seed idempotent : 13 textes (FR/EN) classés par complexité, compte `demo`, historique |
 | TECH-05 | partiel | `render.yaml` | `/api/health` | En ligne en HTTPS et fonctionnel, mais sur une plateforme (Render), pas un VPS — voir choix ci-dessus |
 | TECH-06 | complet | `server/src/realtime.ts`, `server/src/rooms/` | `room-flow.test.ts`, e2e | Socket.IO : salle, réglages, piste en direct (~5 mises à jour/s), bonus, résultats |
 | TECH-07 | complet | `server/src/schemas.ts`, `server/src/race/settings.ts` | `schemas.test.ts`, `room-flow.test.ts` | Zod sur les routes REST, tous les messages Socket.IO et la configuration de course |
@@ -76,7 +76,7 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 
 | ID | Statut | Notes |
 |---|---|---|
-| CONF-01 à CONF-12 | complet | Temps, langue du texte, type (cohérent/aléatoire), nombre de mots, complexité, options (ponctuation, chiffres, majuscules, accents), caractères inclus/exclus, mode d'erreur, bonus, bots, visibilité ; modifiable par l'hôte seul et diffusé en direct (`SettingsPanel` dans `Lobby.tsx`, validation Zod dans `race/settings.ts`). **Limite connue** : le classement automatique de la complexité des textes du corpus donne « facile » (anglais) et « moyen » (français) ; si aucun passage ne correspond, un autre passage de la langue est choisi |
+| CONF-01 à CONF-12 | complet | Temps, langue du texte, type (cohérent/aléatoire), nombre de mots, complexité, options (ponctuation, chiffres, majuscules, accents), caractères inclus/exclus, mode d'erreur, bonus, bots, visibilité ; modifiable par l'hôte seul et diffusé en direct (`SettingsPanel` dans `Lobby.tsx`, validation Zod dans `race/settings.ts`). Le corpus compte 13 passages classés automatiquement (facile, moyen, difficile dans chaque langue sauf le français facile) ; si aucun passage ne correspond, un autre passage de la langue est choisi. Les passages sont du domaine public, sauf deux phrases anglaises difficiles rédigées pour le projet |
 
 ## Déroulement d'une course
 
@@ -108,7 +108,7 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| I18N-01 | partiel | `lib/i18n.tsx`, `lib/i18n-race.ts` | `Lobby.test.tsx`, e2e | Interface entièrement FR/EN ; le serveur n'envoie que des codes d'erreur pour les salles, traduits côté client. **Reste** : les messages d'erreur des routes REST d'authentification et les métadonnées de page sont en français |
+| I18N-01 | complet | `lib/i18n.tsx`, `lib/i18n-race.ts` | `Lobby.test.tsx`, e2e | Interface entièrement FR/EN ; le serveur n'envoie que des codes d'erreur pour les salles, traduits côté client. Les messages d'erreur des routes REST (le serveur répond en français) sont traduits côté client (`api-message.ts`). Les métadonnées de page (titre, description) restent en français |
 | I18N-02 | complet | `TopBar.tsx`, `i18n.tsx` | e2e | Sélecteur, mémorisé, langue du navigateur par défaut |
 | I18N-03 | partiel | `ProfileView.tsx` | — | Dates formatées selon la langue ; les nombres décimaux ne sont pas localisés |
 

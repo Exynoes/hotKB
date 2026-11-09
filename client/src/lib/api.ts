@@ -97,3 +97,4 @@ export const profileApi = {
   history: (token: string, page: number, pageSize = 5) =>
     request<HistoryPage>(`/me/history?page=${page}&pageSize=${pageSize}`, { headers: bearer(token) }),
 };
+

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react';
 import { authApi, ApiError } from '../lib/api';
+import { apiMessage } from '../lib/api-message';
 import { useAuth } from '../lib/auth';
 import { useLang } from '../lib/i18n';
 
@@ -45,7 +46,7 @@ export default function AuthPanel() {
         setIdentity({ token: res.token, kind: 'user', displayName: res.user!.username });
       }
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : t('genericError'));
+      setError(err instanceof ApiError ? apiMessage(err.message, t) : t('genericError'));
     } finally {
       setLoading(false);
     }
