@@ -18,12 +18,18 @@ interface Props {
 }
 
 /** Écran de course : décompte, zone de frappe façon Monkeytype, piste en direct (COURSE-01 à COURSE-09). */
+/** Caractère fautif affiché à la place de la lettre attendue (l'espace est rendu visible). */
+const shown = (c: string) => (c === ' ' ? '\u2423' : c);
+
 export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clockOffset, onKeys, onAbandon }: Props) {
   const { t } = useLang();
   const isRunner = text !== null;
   const [remaining, setRemaining] = useState(() => race.startsAt - (Date.now() + clockOffset()));
   const [pos, setPos] = useState(race.pos);
-  const [wrong, setWrong] = useState<Set<number>>(new Set());
+  const [wrong, setWrong] = useState<Record<number, string>>({}); // position → caractère tapé (mode libre)
+  const [typed, setTyped] = useState(''); // caractère fautif en attente de correction
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const composing = useRef(false);
   const [flash, setFlash] = useState(false);
   const [stuck, setStuck] = useState(false); // faute en attente de correction (mode « corriger »)
   const [mistakes, setMistakes] = useState(0);
@@ -32,6 +38,7 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
   const buffer = useRef('');
   const posRef = useRef(race.pos);
   const boxRef = useRef<HTMLDivElement>(null);
+  const focusInput = useCallback(() => inputRef.current?.focus(), []);
 
   useEffect(() => {
     setCoarse(window.matchMedia('(pointer: coarse)').matches);
@@ -59,34 +66,47 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
   const textLen = text?.length ?? 0;
 
   useEffect(() => {
-    if (remaining <= 0) boxRef.current?.focus();
+    if (remaining <= 0) focusInput();
   }, [remaining <= 0]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+  /**
+   * Traite un caractère saisi. La saisie passe par un champ invisible (et non par les touches du clavier) :
+   * c'est le seul moyen de recevoir les caractères composés, comme « ê » (touche morte ^ puis e).
+   */
+  const handleChar = useCallback(
+    (ch: string) => {
       if (!active || !text) return;
-      if (e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
-      e.preventDefault();
       const p = posRef.current;
       if (p >= text.length) return;
-      buffer.current += e.key;
-      if (e.key === text[p]) {
+      buffer.current += ch;
+      if (ch === text[p]) {
         posRef.current = p + 1;
         setPos(p + 1);
         setStuck(false);
+        setTyped('');
       } else {
         setFlash(true);
         setTimeout(() => setFlash(false), 250);
         setMistakes((m) => m + 1);
         setStuck(true);
+        setTyped(ch);
         if (room.settings.errorMode === 'free') {
           posRef.current = p + 1;
           setPos(p + 1);
-          setWrong((w) => new Set(w).add(p));
+          setWrong((w) => ({ ...w, [p]: ch }));
         }
       }
     },
     [active, text, room.settings.errorMode],
+  );
+
+  const flushInput = useCallback(
+    (el: HTMLTextAreaElement) => {
+      const value = el.value;
+      el.value = '';
+      for (const ch of value) if (ch !== '\n') handleChar(ch);
+    },
+    [handleChar],
   );
 
   // Resynchronisation : si une salve de frappes est perdue, le client serait en avance sur le serveur
@@ -151,11 +171,11 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
         <div
           ref={boxRef}
           tabIndex={0}
-          role="textbox"
+          role="group"
           aria-label={t('typeHere')}
-          aria-readonly="true"
-          onKeyDown={onKeyDown}
-          className="rounded-2xl p-5 text-left outline-none focus-visible:ring-2 select-none"
+          onFocus={focusInput}
+          onClick={focusInput}
+          className="relative rounded-2xl p-5 text-left outline-none focus-visible:ring-2 select-none"
           style={{
             background: 'var(--surface)',
             border: `2px solid ${flash ? 'var(--danger)' : 'var(--border)'}`,
@@ -168,9 +188,22 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
           }}
           data-testid="typing-box"
         >
+          <textarea
+            ref={inputRef}
+            data-testid="typing-input"
+            aria-label={t('typeHere')}
+            className="absolute opacity-0 w-px h-px pointer-events-none"
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            onCompositionStart={() => { composing.current = true; }}
+            onCompositionEnd={(e) => { composing.current = false; flushInput(e.currentTarget); }}
+            onChange={(e) => { if (!composing.current) flushInput(e.currentTarget); }}
+          />
           {chars.map((c, i) => {
             const done = i < pos;
-            const bad = wrong.has(i);
+            const bad = i in wrong;
             const current = i === pos;
             const pending = current && stuck;
             return (
@@ -185,7 +218,7 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
                   whiteSpace: 'pre-wrap',
                 }}
               >
-                {c}
+                {bad ? shown(wrong[i]) : pending ? shown(typed) : c}
               </span>
             );
           })}
@@ -209,7 +242,7 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
             <span className="flex items-center gap-2">
               <span>{t('abandonConfirm')}</span>
               <button className="underline" onClick={() => { setConfirm(false); onAbandon(); }}>{t('abandonYes')}</button>
-              <button className="underline" onClick={() => { setConfirm(false); boxRef.current?.focus(); }}>{t('abandonNo')}</button>
+              <button className="underline" onClick={() => { setConfirm(false); focusInput(); }}>{t('abandonNo')}</button>
             </span>
           ) : (
             <button className="underline underline-offset-2" onClick={() => setConfirm(true)}>

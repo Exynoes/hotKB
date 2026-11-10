@@ -35,12 +35,34 @@ describe('RaceScreen', () => {
     const onKeys = setup();
     act(() => { vi.advanceTimersByTime(200); });
     const box = screen.getByTestId('typing-box');
-    fireEvent.keyDown(box, { key: 'a' });
-    fireEvent.keyDown(box, { key: 'x' }); // erreur : on n'avance pas
+    const input = screen.getByTestId('typing-input');
+    fireEvent.change(input, { target: { value: 'a' } });
+    fireEvent.change(input, { target: { value: 'x' } }); // erreur : on n'avance pas
     expect(box.querySelectorAll('[data-state="done"]')).toHaveLength(1);
-    expect(box.querySelector('[data-state="current"]')?.textContent).toBe('b');
+    expect(box.querySelector('[data-state="current"]')?.textContent).toBe('x'); // la faute tapée est visible
     act(() => { vi.advanceTimersByTime(100); });
     expect(onKeys).toHaveBeenCalledWith('ax'); // les frappes partent groupées
+    vi.useRealTimers();
+  });
+
+  it('accepte un caractère composé comme « ê » (touche morte)', () => {
+    vi.useFakeTimers();
+    const onKeys = vi.fn();
+    render(
+      <LangProvider>
+        <RaceScreen room={room} race={race} text="forêt" tick={null} myId="me" bonusLog={[]} clockOffset={() => 0} onKeys={onKeys} onAbandon={vi.fn()} />
+      </LangProvider>,
+    );
+    act(() => { vi.advanceTimersByTime(200); });
+    const input = screen.getByTestId('typing-input');
+    for (const c of 'for') fireEvent.change(input, { target: { value: c } });
+    fireEvent.compositionStart(input);
+    fireEvent.change(input, { target: { value: '^' } }); // pendant la composition : ignoré
+    fireEvent.change(input, { target: { value: 'ê' } }); // le navigateur remplace ^ par le caractère composé
+    fireEvent.compositionEnd(input, { data: 'ê' });
+    act(() => { vi.advanceTimersByTime(200); });
+    expect(onKeys).toHaveBeenCalledWith('forê');
+    expect(screen.getByTestId('typing-box').querySelectorAll('[data-state="done"]')).toHaveLength(4);
     vi.useRealTimers();
   });
 
