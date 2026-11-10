@@ -90,7 +90,7 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | COURSE-06 | complet | `race/engine.ts` | `race-engine.test.ts`, `room-flow.test.ts` | Le serveur rejoue les frappes contre le texte et plafonne la vitesse (25 frappes/s) : la progression envoyée par le client n'est jamais crue |
 | COURSE-07 | complet | `rooms/manager.ts`, `RaceScreen.tsx` | `room-flow.test.ts` | Abandon avec confirmation dans la page |
 | COURSE-08 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Déconnexion de plus de 30 s = abandon ; retour rapide = reprise |
-| COURSE-09 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Fin quand tous ont fini ou à la fin du temps ; **les bots continuent après l'arrivée des humains**, la course se termine quand tous ont fini |
+| COURSE-09 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Fin quand tous ont fini ou à la fin du temps ; la course se termine dès que plus aucun humain ne court (les bots encore en route sont classés selon leur progression) |
 | COURSE-10 | complet | `race/engine.ts` | `race-engine.test.ts` | Terminés (par temps), puis temps écoulé (par progression), puis abandons |
 | COURSE-11 | complet | `rooms/manager.ts`, `HomeView.tsx` | `room-flow.test.ts` | Rejouer, retour à la salle, fermer |
 
@@ -136,4 +136,3 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 - OAuth non activé en production.
 - La table `personal_best` existe mais n'est pas utilisée : les records sont calculés à partir de `race_result`.
 - Pas d'historique pour les invités.
-- Les bots continuent de taper après l'arrivée des humains.

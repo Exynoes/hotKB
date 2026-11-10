@@ -1042,7 +1042,8 @@ export class RoomManager {
       if (!stillHere) void this.cancelRace(room);
       return;
     }
-    const running = [...race.players.values()].some((p) => p.status === 'en_course');
+    // la course se termine quand plus aucun humain ne court : les bots encore en route sont classés selon leur progression
+    const running = [...race.players.values()].some((p) => p.status === 'en_course' && p.kind !== 'bot');
     if (!running) void this.endRace(room);
   }
 

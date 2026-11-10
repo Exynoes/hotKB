@@ -15,13 +15,14 @@ interface Props {
   clockOffset: () => number;
   onKeys: (keys: string) => void;
   onAbandon: () => void;
+  onLeave: () => void;
 }
 
 /** Écran de course : décompte, zone de frappe façon Monkeytype, piste en direct (COURSE-01 à COURSE-09). */
 /** Caractère fautif affiché à la place de la lettre attendue (l'espace est rendu visible). */
 const shown = (c: string) => (c === ' ' ? '\u2423' : c);
 
-export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clockOffset, onKeys, onAbandon }: Props) {
+export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clockOffset, onKeys, onAbandon, onLeave }: Props) {
   const { t } = useLang();
   const isRunner = text !== null;
   const [remaining, setRemaining] = useState(() => race.startsAt - (Date.now() + clockOffset()));
@@ -230,6 +231,9 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
       )}
       {isRunner && me && me.st !== 'en_course' && (
         <p role="status" className="text-center font-semibold">{me.st === 'termine' ? t('statusTermine') : me.st === 'abandon' ? t('statusAbandon') : t('statusTemps')} · {t('waitingEnd')}</p>
+      )}
+      {isRunner && me && me.st !== 'en_course' && (
+        <button className="underline underline-offset-2 self-center" onClick={onLeave}>{t('leave')}</button>
       )}
 
       <div className="flex items-center justify-between text-sm font-mono" style={{ color: 'var(--muted)' }}>

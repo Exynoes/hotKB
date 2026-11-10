@@ -16,7 +16,7 @@ describe('reste de salle après redémarrage (SALLE-06)', () => {
   it("une participation « active » en base mais absente de la mémoire ne bloque plus la personne", async () => {
     const u = await registerUser('stale');
     // reste d'un ancien processus : salle et participation actives en base, rien en mémoire
-    const [old] = await db.insert(rooms).values({ code: 'ZZZZZ9', visibility: 'open', hostUserId: u.id, status: 'en_attente' }).returning({ id: rooms.id });
+    const [old] = await db.insert(rooms).values({ code: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), visibility: 'open', hostUserId: u.id, status: 'en_attente' }).returning({ id: rooms.id });
     await db.insert(roomParticipants).values({ roomId: old.id, userId: u.id });
 
     const s = client(rt.url, u.token);

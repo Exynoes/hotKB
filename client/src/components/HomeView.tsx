@@ -50,6 +50,7 @@ export default function HomeView() {
             clockOffset={rm.clockOffset}
             onKeys={rm.sendKeys}
             onAbandon={rm.abandon}
+            onLeave={leaveRoom}
           />
         ) : room && room.status === 'resultats' && rm.results ? (
           <div className="flex flex-col items-center gap-4 w-full">

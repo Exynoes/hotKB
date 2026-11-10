@@ -23,7 +23,7 @@ beforeEach(() => {
 function setup(onKeys = vi.fn()) {
   render(
     <LangProvider>
-      <RaceScreen room={room} race={race} text="ab c" tick={null} myId="me" bonusLog={[]} clockOffset={() => 0} onKeys={onKeys} onAbandon={vi.fn()} />
+      <RaceScreen room={room} race={race} text="ab c" tick={null} myId="me" bonusLog={[]} clockOffset={() => 0} onKeys={onKeys} onAbandon={vi.fn()} onLeave={vi.fn()} />
     </LangProvider>,
   );
   return onKeys;
@@ -50,7 +50,7 @@ describe('RaceScreen', () => {
     const onKeys = vi.fn();
     render(
       <LangProvider>
-        <RaceScreen room={room} race={race} text="forêt" tick={null} myId="me" bonusLog={[]} clockOffset={() => 0} onKeys={onKeys} onAbandon={vi.fn()} />
+        <RaceScreen room={room} race={race} text="forêt" tick={null} myId="me" bonusLog={[]} clockOffset={() => 0} onKeys={onKeys} onAbandon={vi.fn()} onLeave={vi.fn()} />
       </LangProvider>,
     );
     act(() => { vi.advanceTimersByTime(200); });
