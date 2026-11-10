@@ -4,7 +4,9 @@ import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { env } from './env.js';
-import { pool } from './db.js';
+import { isNull, ne } from 'drizzle-orm';
+import { db, pool } from './db.js';
+import { roomParticipants, rooms as roomsTable } from './schema.js';
 import { createApp } from './app.js';
 import { createRealtime } from './realtime.js';
 
@@ -29,7 +31,14 @@ const httpServer = createServer(app);
 // Socket.IO : choix documenté dans docs/ARCHITECTURE.md, ADR-001.
 export const io = createRealtime(httpServer);
 
-nextApp.prepare().then(() => {
+/** Les salles vivent en mémoire : après un redémarrage, celles restées « actives » en base sont orphelines. */
+async function closeOrphanRooms() {
+  await db.update(roomParticipants).set({ leftAt: new Date() }).where(isNull(roomParticipants.leftAt));
+  await db.update(roomsTable).set({ status: 'fermee' }).where(ne(roomsTable.status, 'fermee'));
+}
+
+nextApp.prepare().then(async () => {
+  await closeOrphanRooms();
   httpServer.listen(env.port, () => {
     console.log(`[server] HotKB (Next.js + API + WebSocket) à l'écoute sur le port ${env.port}`);
   });

@@ -232,6 +232,17 @@ export class RoomManager {
   }
 
   private async insertParticipant(room: Room, auth: AuthPayload, role: MemberRole): Promise<string> {
+    // Les appelants ont déjà vérifié que la personne n'est dans aucune salle en mémoire : toute participation
+    // encore « active » en base est un reste (redémarrage du serveur, déploiement) qui la bloquerait pour rien.
+    await db
+      .update(roomParticipants)
+      .set({ leftAt: new Date() })
+      .where(
+        and(
+          isNull(roomParticipants.leftAt),
+          auth.kind === 'user' ? eq(roomParticipants.userId, auth.sub) : eq(roomParticipants.guestId, auth.sub),
+        ),
+      );
     const [row] = await db
       .insert(roomParticipants)
       .values({
