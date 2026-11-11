@@ -19,6 +19,10 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1 };
  */
 const initScript = `(function(){try{var d=document.documentElement;var t=localStorage.getItem('hotkb:theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.dataset.theme=t;var l=localStorage.getItem('hotkb:lang');if(l!=='fr'&&l!=='en'){l=(navigator.language||'fr').toLowerCase().indexOf('en')===0?'en':'fr'}d.lang=l}catch(e){}})();`;
 
+const FONTS_URL =
+  'https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap';
+const fontScript = `(function(){var l=document.createElement('link');l.rel='stylesheet';l.href='${FONTS_URL}';document.head.appendChild(l)})();`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
@@ -26,10 +30,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: initScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
+        {/* polices chargées sans bloquer le premier affichage (script) ; <noscript> en secours */}
+        <script dangerouslySetInnerHTML={{ __html: fontScript }} />
+        <noscript>
+          <link href={FONTS_URL} rel="stylesheet" />
+        </noscript>
       </head>
       <body>
         <Providers>

@@ -28,7 +28,7 @@ export default function HomeView() {
       <main className="min-h-screen flex flex-col items-center justify-center gap-6 px-4 py-12 text-center">
         <TopBar />
         <header className="flex flex-col items-center gap-2">
-          <img src="/logo.png" width="96" height="96" alt="Logo HotKB" />
+          <img src="/logo-192.png" width="96" height="96" alt="Logo HotKB" />
           <h1 className="text-5xl font-extrabold">
             Hot<span style={{ color: "var(--accent)" }}>KB</span>
           </h1>
