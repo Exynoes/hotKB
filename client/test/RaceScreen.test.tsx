@@ -36,8 +36,8 @@ describe('RaceScreen', () => {
     act(() => { vi.advanceTimersByTime(200); });
     const box = screen.getByTestId('typing-box');
     const input = screen.getByTestId('typing-input');
-    fireEvent.change(input, { target: { value: 'a' } });
-    fireEvent.change(input, { target: { value: 'x' } }); // erreur : on n'avance pas
+    fireEvent.input(input, { target: { value: 'a' } });
+    fireEvent.input(input, { target: { value: 'ax' } }); // erreur : on n'avance pas
     expect(box.querySelectorAll('[data-state="done"]')).toHaveLength(1);
     expect(box.querySelector('[data-state="current"]')?.textContent).toBe('x'); // la faute tapée est visible
     act(() => { vi.advanceTimersByTime(100); });
@@ -55,14 +55,57 @@ describe('RaceScreen', () => {
     );
     act(() => { vi.advanceTimersByTime(200); });
     const input = screen.getByTestId('typing-input');
-    for (const c of 'for') fireEvent.change(input, { target: { value: c } });
+    fireEvent.input(input, { target: { value: 'f' } });
+    fireEvent.input(input, { target: { value: 'fo' } });
+    fireEvent.input(input, { target: { value: 'for' } });
     fireEvent.compositionStart(input);
-    fireEvent.change(input, { target: { value: '^' } }); // pendant la composition : ignoré
-    fireEvent.change(input, { target: { value: 'ê' } }); // le navigateur remplace ^ par le caractère composé
+    fireEvent.input(input, { target: { value: 'for^' }, isComposing: true }); // pendant la composition : ignoré
+    fireEvent.input(input, { target: { value: 'forê' }, isComposing: true }); // le navigateur remplace ^ par le caractère composé
     fireEvent.compositionEnd(input, { data: 'ê' });
     act(() => { vi.advanceTimersByTime(200); });
     expect(onKeys).toHaveBeenCalledWith('forê');
     expect(screen.getByTestId('typing-box').querySelectorAll('[data-state="done"]')).toHaveLength(4);
+    vi.useRealTimers();
+  });
+
+  it('ne reste pas bloqué après un « é » composé : la lettre suivante passe', () => {
+    vi.useFakeTimers();
+    const onKeys = vi.fn();
+    render(
+      <LangProvider>
+        <RaceScreen room={room} race={race} text="représ" tick={null} myId="me" bonusLog={[]} clockOffset={() => 0} onKeys={onKeys} onAbandon={vi.fn()} onLeave={vi.fn()} />
+      </LangProvider>,
+    );
+    act(() => { vi.advanceTimersByTime(200); });
+    const input = screen.getByTestId('typing-input');
+    fireEvent.input(input, { target: { value: 'rep' } });
+    fireEvent.input(input, { target: { value: 'repr' } });
+    fireEvent.compositionStart(input);
+    fireEvent.input(input, { target: { value: 'repr´' }, isComposing: true });
+    fireEvent.input(input, { target: { value: 'représ' }, isComposing: true }); // composé : é remplace ´
+    fireEvent.compositionEnd(input, { data: 'é' });
+    // le navigateur laisse « é » dans le champ ; la lettre suivante s'ajoute après
+    fireEvent.input(input, { target: { value: 'représ' } });
+    fireEvent.input(input, { target: { value: 'représ' } });
+    act(() => { vi.advanceTimersByTime(200); });
+    expect(onKeys).toHaveBeenCalledWith('représ');
+    vi.useRealTimers();
+  });
+
+  it('ignore un accent isolé de touche morte', () => {
+    vi.useFakeTimers();
+    const onKeys = vi.fn();
+    render(
+      <LangProvider>
+        <RaceScreen room={room} race={race} text="abc" tick={null} myId="me" bonusLog={[]} clockOffset={() => 0} onKeys={onKeys} onAbandon={vi.fn()} onLeave={vi.fn()} />
+      </LangProvider>,
+    );
+    act(() => { vi.advanceTimersByTime(200); });
+    const input = screen.getByTestId('typing-input');
+    fireEvent.input(input, { target: { value: '^' } });
+    fireEvent.input(input, { target: { value: '^a' } });
+    act(() => { vi.advanceTimersByTime(200); });
+    expect(onKeys).toHaveBeenCalledWith('a');
     vi.useRealTimers();
   });
 

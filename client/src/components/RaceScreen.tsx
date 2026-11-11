@@ -20,6 +20,7 @@ interface Props {
 
 /** Écran de course : décompte, zone de frappe façon Monkeytype, piste en direct (COURSE-01 à COURSE-09). */
 /** Caractère fautif affiché à la place de la lettre attendue (l'espace est rendu visible). */
+const DEAD_ACCENTS = '\u00b4`^\u00a8~\u02c6\u02dc\u00b8';
 const shown = (c: string) => (c === ' ' ? '\u2423' : c);
 
 export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clockOffset, onKeys, onAbandon, onLeave }: Props) {
@@ -31,6 +32,7 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
   const [typed, setTyped] = useState(''); // caractère fautif en attente de correction
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const composing = useRef(false);
+  const consumed = useRef(0); // nombre de caractères du champ invisible déjà traités
   const [flash, setFlash] = useState(false);
   const [stuck, setStuck] = useState(false); // faute en attente de correction (mode « corriger »)
   const [mistakes, setMistakes] = useState(0);
@@ -101,14 +103,39 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
     [active, text, room.settings.errorMode],
   );
 
+  /**
+   * Lit les nouveaux caractères du champ invisible. On ne vide JAMAIS le champ pendant une composition
+   * (touche morte) : certains navigateurs réinsèrent alors le texte composé et bloquent la lettre suivante.
+   * On mémorise plutôt combien de caractères ont déjà été traités.
+   */
   const flushInput = useCallback(
     (el: HTMLTextAreaElement) => {
+      if (composing.current) return;
       const value = el.value;
-      el.value = '';
-      for (const ch of value) if (ch !== '\n') handleChar(ch);
+      if (value.length < consumed.current) consumed.current = 0;
+      const fresh = value.slice(consumed.current);
+      consumed.current = value.length;
+      for (const ch of fresh) {
+        if (ch === '\n' || ch === '\r') continue;
+        // accent isolé d'une touche morte (´ ` ^ ¨ ~) : pas une faute, la lettre suivante le complétera
+        if (DEAD_ACCENTS.includes(ch) && ch !== text?.[posRef.current]) continue;
+        handleChar(ch);
+      }
     },
-    [handleChar],
+    [handleChar, text],
   );
+
+  // nettoyage du champ invisible quand il est au repos (jamais pendant une composition)
+  useEffect(() => {
+    const id = setInterval(() => {
+      const el = inputRef.current;
+      if (el && !composing.current && el.value.length > 0 && consumed.current >= el.value.length) {
+        el.value = '';
+        consumed.current = 0;
+      }
+    }, 500);
+    return () => clearInterval(id);
+  }, []);
 
   // Resynchronisation : si une salve de frappes est perdue, le client serait en avance sur le serveur
   // pour toujours. On recale sur la position confirmée (progression × longueur) dès que l'écart persiste.
@@ -200,7 +227,13 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
             spellCheck={false}
             onCompositionStart={() => { composing.current = true; }}
             onCompositionEnd={(e) => { composing.current = false; flushInput(e.currentTarget); }}
-            onChange={(e) => { if (!composing.current) flushInput(e.currentTarget); }}
+            onInput={(e) => {
+              const native = e.nativeEvent as InputEvent;
+              // garde-fou : si un navigateur oublie compositionend, on ne reste pas bloqué
+              if (composing.current && !native.isComposing) composing.current = false;
+              flushInput(e.currentTarget);
+            }}
+            onBlur={() => { composing.current = false; }}
           />
           {chars.map((c, i) => {
             const done = i < pos;
