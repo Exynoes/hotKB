@@ -15,24 +15,26 @@
 3. Les exigences sont suivies dans `docs/EXIGENCES.md` avec un statut honnête, y compris ce qui manque.
 4. Le code est relu par l'auteur via les commits sur GitHub.
 
-## 3. Trois situations où l'IA s'est trompée
+## 3. Trois situations où il a fallu corriger l'IA
 
-*(À reformuler avec tes mots. Ce sont des faits du projet.)*
+Ces trois histoires sont racontées par l'auteur, à partir de ses propres essais du site. L'orthographe seule a été corrigée ; chaque récit est suivi d'une note factuelle sur la correction faite.
 
-1. **Document Word remis sans les liens.** Une version plus ancienne de la démarche créative, sans les liens vers le site et le GitHub, a été remise à la place de la version corrigée. Le professeur avait besoin des liens pour évaluer. Correction : refaire le document avec des hyperliens cliquables et remplacer le fichier. *Leçon : vérifier quel fichier est réellement envoyé, pas seulement le fichier généré.*
-2. **Page d'accueil trop chargée.** Le premier design de l'accueil copiait trop la page de TypeRacer ; l'auteur l'a trouvée « trop chargée et trop classique ». Elle a été refaite sur le modèle de la page de saisie de code de Kahoot. *Leçon : l'IA reproduit une référence au lieu de traduire ce que l'auteur aime d'elle.*
-3. **Migration de base de données qui échoue sur des données existantes.** La migration 003 ajoutait un index unique « une seule salle active par personne » sans tenir compte des anciennes lignes déjà présentes ; elle échouait. Il a fallu d'abord marquer les anciennes participations comme terminées (`UPDATE … SET left_at = now()`) avant de créer l'index. *Leçon : tester les migrations sur une base qui contient déjà des données, pas seulement sur une base vide.*
-
-Autres erreurs corrigées en cours de route (si tu veux en remplacer une) : l'historique du profil ignorait les courses avec texte aléatoire (jointure interne au lieu de jointure gauche) ; la touche « Rejoindre » apparaissait en double après l'ajout de l'explorateur de salles et cassait un test ; le texte de test de la course contenait des accents que Playwright ne peut pas taper.
+1. **Les fautes de frappe n'étaient pas visibles.** « Pendant le travail, j'ai remarqué qu'il n'affichait pas les erreurs quand on tape un mauvais caractère. J'ai demandé qu'il les mette. Aussi, avec des caractères spéciaux, le site ne prenait pas tous les caractères spéciaux et ça pouvait bloquer les joueurs du site. »
+   *Correction :* la lettre attendue devient rouge et le caractère tapé s'affiche ; la saisie passe par un champ invisible qui accepte les accents et les touches mortes (« é », « ê »), avec des tests dédiés.
+2. **« Tu es déjà dans une salle » sur l'accueil.** « Pendant que je voulais rejoindre une salle, j'ai eu un bug dans le site : il disait que j'étais déjà dans une salle, alors que j'étais dans le menu d'accueil, et ça n'avait pas de sens. J'ai donc demandé qu'il me corrige ce problème. »
+   *Correction :* les anciennes participations restées actives après un redéploiement sont nettoyées au démarrage du serveur et à chaque création ou arrivée dans une salle.
+3. **Mauvais texte et impossible d'abandonner.** « Dans la course, des fois je prenais le texte le plus facile mais il me ressortait le texte le plus long, et ça me frustrait. J'ai demandé de corriger, et j'essayais d'abandonner, ce qui ne marchait même pas ! J'ai découvert 2 erreurs en un test. »
+   *Correction :* si aucun texte n'existe pour la difficulté demandée, le serveur choisit la complexité la plus proche ; la course se termine quand plus aucun humain ne court, et un bouton « Quitter » apparaît après l'abandon.
 
 ## 4. Réflexion de l'auteur
 
-*(À écrire par toi, quelques phrases chacune.)*
+**Ce que l'IA a apporté.** « Je ne pense pas que je pourrais le faire seul. Il y a trop de choses que je ne savais pas faire, et je suis lent pour faire le code. Avec l'IA, je pouvais créer rapidement ce qui était demandé. Elle m'a aussi aidé à mettre mon site en ligne gratuitement, ce que je ne savais pas vraiment comment faire. L'IA a aussi fait les tests pour moi, ce qui m'a rendu la tâche beaucoup plus simple. Quand je ne savais pas quoi faire ou que je ne comprenais pas ce qu'elle avait fait, je lui demandais et je regardais ce qu'elle expliquait, mais je ne comprenais pas tout et je ne me souviens pas de tout ce qu'elle a fait, mais au moins ça marche. »
 
-- Qu'est-ce que l'IA a rendu plus rapide ? Qu'est-ce qu'elle a rendu plus difficile ?
-- Qu'est-ce que tu as dû décider toi-même parce que l'IA ne pouvait pas le faire ?
-- Comment sais-tu que le code fonctionne (tests, essais à la main) ?
-- Qu'est-ce que tu ferais différemment la prochaine fois ?
+**Les limites et les risques.** « Le risque avec lequel j'ai travaillé, c'est que je laissais aller sur Render tout seul et je ne savais pas ce qu'il faisait dedans. J'ai dû faire plusieurs tests parce que l'IA ne pouvait pas le faire, à cause de problèmes d'accès. Elle fait du code que je ne comprends pas, et ça me frustrait, donc j'essayais de demander ce qu'elle avait fait dans le code, mais je ne me souviens pas de tout. Aussi, à certains moments, l'IA prenait trop de temps à générer sa réponse, ce qui me faisait paniquer. »
+
+**Comment j'ai vérifié que ça fonctionne.** « Ce que je faisais, c'était juste de tester le site pour voir si le site marche vraiment. J'ai fait toutes les possibilités qu'un utilisateur fait sur mon site, pour être sûr que ce que j'attends est vraiment ce que le client a demandé. J'ai aussi demandé à mon IA de faire des tests manuels, pour voir aussi ce que je dois tester pour être sûr que le site est vraiment correct. »
+
+**Ce que je ferais autrement.** « Ce que je ferai la prochaine fois, c'est de faire par moi-même le code, et si je bloque, que l'IA m'aide. Mais je ne sais pas si c'est la bonne approche, car je ne me sens pas toujours capable de faire ce qui est demandé ; par exemple, mettre le site en ligne, j'ai demandé à mon IA de le faire pour moi. Pour travailler dans le code, je veux travailler petit à petit, pour éviter de trop toucher au code et éviter trop de dépendances entre les fonctions. Le problème pour moi, c'est que j'ai peur de ne pas tout comprendre de ce que l'IA a fait en réalité et de devenir trop dépendant d'elle. »
 
 ## 5. Limites déclarées
 
