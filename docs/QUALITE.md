@@ -17,6 +17,15 @@ Intégration continue : `.github/workflows/ci.yml` (lint, `tsc --noEmit`, tests 
 | Accueil `/` | 96 | 96 → corrigé (contrastes) | 96 | 100 |
 | Profil `/profile` | 100 | 100 | 96 | 100 |
 
+**Mesure sur le site en ligne** (https://hotkb.onrender.com, 11 novembre 2026, Chrome en navigation privée) :
+
+| Appareil | Performance | Accessibilité | Bonnes pratiques | SEO |
+|---|---|---|---|---|
+| Mobile (avant optimisation) | 83 | 100 | 100 | 100 |
+| Desktop (après optimisation) | 91 à 100 (deux mesures) | 100 | 100 | 100 |
+
+Optimisations faites après la première mesure : logo de 512 px remplacé par une version de 192 px (120 Ko → 28 Ko) et polices Google chargées sans bloquer le premier affichage. Lighthouse varie d'une analyse à l'autre ; le Mobile n'a pas été remesuré après ces changements.
+
 Les « bonnes pratiques » perdent des points uniquement parce que, dans l'environnement de mesure, le chargement des polices Google Fonts est bloqué (erreur réseau en console) ; ce n'est pas une erreur de l'application. Les mesures sont à refaire sur le site en ligne avant la remise.
 
 ## Accessibilité

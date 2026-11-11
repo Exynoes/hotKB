@@ -116,15 +116,15 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 
 | ID | Statut | Fichiers principaux | Tests | Notes |
 |---|---|---|---|---|
-| TEST-01 | complet | `server/test/`, `client/test/` | 80 serveur + 16 client | Moteur de frappe, bots, bonus, textes, salles, profil |
+| TEST-01 | complet | `server/test/`, `client/test/` | 83 serveur + 19 client | Moteur de frappe, bots, bonus, textes, salles, profil |
 | TEST-02 | complet | `e2e/`, `playwright.config.ts` | e2e (4 scénarios) | Lobby, langue/thème, profil, course complète contre un bot |
 | TEST-03 | complet | `e2e/` | e2e | Connexion par nom d'utilisateur et mot de passe |
-| PERF-01 | à vérifier | — | — | Lighthouse : voir `docs/QUALITE.md` pour la mesure |
+| PERF-01 | complet | — | Lighthouse | Mesuré sur le site en ligne (Chrome, navigation privée, Desktop) : Performance 91 à 100, Accessibilité 100, Bonnes pratiques 100, SEO 100. En Mobile avant optimisation : Performance 83 ; logo allégé et polices non bloquantes ajoutés depuis. Détail dans `docs/QUALITE.md` |
 | PERF-02 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Frappes groupées (≈ 12 messages/s au plus), diffusion de la piste ≈ 5 fois/s, jamais une émission par frappe |
 | PERF-03 | complet | `LiveTrack.tsx` | — | Transition CSS de 200 ms entre deux mesures, aucune mise à jour par image |
-| A11Y-01 | partiel | `globals.css` | — | Palette soignée, contraste non mesuré formellement |
-| A11Y-02 | partiel | `layout.tsx` | — | `<main>`, un `<h1>` par page ; `<header>`, `<nav>`, `<footer>` à compléter |
-| A11Y-03 | partiel | `Lobby.tsx`, `AuthPanel.tsx` | — | Réglages et profil avec `<label>` ; formulaire de connexion encore avec `placeholder` |
+| A11Y-01 | complet | `globals.css` | Lighthouse | Contrastes WCAG AA (`--accent-btn`, `--muted`) ; audit d'accessibilité Lighthouse à 100 sur le site en ligne |
+| A11Y-02 | complet | `layout.tsx`, `HomeView.tsx`, `TopBar.tsx`, `Footer.tsx` | Lighthouse | `<main>`, `<header>`, `<nav>` (étiqueté), `<footer>`, un `<h1>` par page |
+| A11Y-03 | complet | `Lobby.tsx`, `AuthPanel.tsx`, `HomeView.tsx` | Lighthouse | Champs avec `<label>` ou `aria-label` ; le `placeholder` n'est qu'un indice en plus |
 | A11Y-04 | partiel | — | — | Navigation clavier native ; zone de frappe focalisable (`tabIndex`) |
 | SEC-01 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Toutes les actions d'hôte vérifiées côté serveur |
 | SEC-02 | complet | `routes/profile.ts` | `profile-edit.test.ts` | Téléversement : taille limitée, signature de fichier, ré-encodage par `sharp` (le fichier d'origine n'est jamais servi) |
