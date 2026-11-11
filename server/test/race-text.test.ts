@@ -9,6 +9,23 @@ const passages: Passage[] = [
   { id: '3', language: 'en', complexity: 'easy', content: 'The cat sleeps on the bed. It is warm here and the moon is bright. We play outside with the dog.' },
 ];
 
+describe('repli de complexité (CONF-05)', () => {
+  const fr = (id: string, complexity: Passage['complexity'], word: string): Passage => ({
+    id, language: 'fr', complexity, content: Array.from({ length: 20 }, () => word).join(' '),
+  });
+  const pool = [fr('m', 'medium', 'maison'), fr('h', 'hard', 'extraordinaire')];
+
+  it('« facile » sans texte facile prend le plus proche (moyen), pas le plus difficile', () => {
+    const t = prepareText({ ...DEFAULT_SETTINGS, complexity: 'easy', words: 10 }, createRng(1), pool);
+    expect(t.texteId).toBe('m');
+  });
+
+  it('« difficile » sans texte difficile prend le moyen', () => {
+    const t = prepareText({ ...DEFAULT_SETTINGS, complexity: 'hard', words: 10 }, createRng(1), [pool[0]]);
+    expect(t.texteId).toBe('m');
+  });
+});
+
 describe('configuration (CONF-01 à CONF-12)', () => {
   it('valide les bornes', () => {
     expect(raceSettingsSchema.safeParse({ maxTimeSec: 10 }).success).toBe(false);

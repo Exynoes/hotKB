@@ -147,8 +147,13 @@ export function prepareText(settings: RaceSettings, rng: Rng, passages: Passage[
     const inLang = passages.filter((p) => p.language === settings.language);
     const prepared = (p: Passage) => p.content.split(/\s+/).map((w) => applyOptions(w, settings)).filter(Boolean);
     const compatible = (list: Passage[]) => list.filter((p) => !hasExcluded(prepared(p).join(' '), settings.excludeChars));
-    let candidates = compatible(inLang.filter((p) => p.complexity === settings.complexity));
-    if (candidates.length === 0) candidates = compatible(inLang);
+    // sans passage de la complexité demandée, on prend la plus proche (facile → moyen avant difficile)
+    const order = { easy: ['easy', 'medium', 'hard'], medium: ['medium', 'easy', 'hard'], hard: ['hard', 'medium', 'easy'] }[settings.complexity];
+    let candidates: Passage[] = [];
+    for (const level of order) {
+      candidates = compatible(inLang.filter((p) => p.complexity === level));
+      if (candidates.length > 0) break;
+    }
     if (candidates.length > 0) {
       const first = rng.pick(candidates);
       let words = prepared(first);
