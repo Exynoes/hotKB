@@ -7,6 +7,12 @@ Projet réalisé pour le cours **Web V — Paradigme de programmation fonctionne
 **En ligne : https://hotkb.onrender.com** (plan gratuit : le premier chargement peut prendre environ 50 s, le temps que le serveur se réveille).
 **Compte de démonstration** : `demo` / `demo1234` (avec un historique de courses). Un invité peut aussi rejoindre une salle avec un simple nom.
 
+## Captures d'écran
+
+| Accueil | Résultats d'une course | Profil |
+|---|---|---|
+| ![Accueil](docs/captures/accueil.png) | ![Résultats](docs/captures/resultats.png) | ![Profil](docs/captures/profil.png) |
+
 ## Ce que fait l'application
 
 1. **Accueil** : jouer en invité, créer un compte (ou se connecter), saisir un code de salle, lancer une **course rapide**, parcourir les **salles publiques**.
@@ -44,12 +50,26 @@ npm install
 
 ### Base de données
 
-1. Crée une base PostgreSQL (ex. `hotkb`).
-2. Copie `server/.env.example` vers `server/.env` et renseigne `DATABASE_URL`.
+1. Lance PostgreSQL avec Docker Compose (recommandé) : `docker compose up -d` (crée la base `hotkb`, utilisateur et mot de passe `postgres`). Sans Docker, crée toi-même une base PostgreSQL.
+2. Copie `server/.env.example` vers `server/.env` ; la valeur par défaut de `DATABASE_URL` correspond au Docker Compose.
 3. Applique le schéma :
    ```bash
    npm run migrate
    ```
+
+### Variables d'environnement (`server/.env`, modèle dans `server/.env.example`)
+
+| Variable | Rôle |
+|---|---|
+| `DATABASE_URL` | Connexion PostgreSQL |
+| `JWT_SECRET` | Clé de signature des sessions (à changer en production) |
+| `PORT` | Port du serveur (4000 par défaut) |
+| `NODE_ENV` | `development` ou `production` |
+| `CORS_ORIGIN` | Origine autorisée pour l'API |
+| `PUBLIC_URL` | URL publique du site (rappel OAuth) |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | Connexion OAuth, optionnelle (désactivée si vides) |
+
+Aucun secret n'est versionné.
 
 ### Données de démonstration
 

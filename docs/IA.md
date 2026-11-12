@@ -1,10 +1,9 @@
 # Utilisation de l'IA — HotKB
 
-> **Brouillon à relire et à réécrire avec tes propres mots avant la remise.** Les faits ci-dessous viennent du déroulement réel du projet ; la section 4 (réflexion) est volontairement à toi.
-
 ## 1. Outil et rôle
 
-- Outil : **Claude** (Anthropic), utilisé via Claude Code dans une session de travail.
+- Outil : **Claude** (Anthropic), utilisé via Claude Code dans une session de travail. Aucun autre agent.
+- Fichier d'instructions d'agent : [`CLAUDE.md`](../CLAUDE.md), commité à la racine du dépôt (commandes, règles du projet, pièges connus).
 - Ce que l'IA a fait : écrire et tester le code (serveur de course, bots, bonus, interface), rédiger les documents techniques, proposer des structures.
 - Ce que l'auteur a fait seul, **sans IA** : le **nom** HotKB et son origine, le **concept et le croquis du logo**, le choix des références (Monkeytype, Duolingo, TypeRacer, Kahoot) et ses commentaires sur chacune, les décisions de direction (accueil plus simple façon Kahoot, rectangle autour du texte, enlever le rouge du document Word, etc.). Pour le logo, la flamme vient de la bibliothèque Canva et les touches K/B ont été rendues par l'IA d'après son croquis (indiqué dans la démarche créative).
 
@@ -13,7 +12,7 @@
 1. L'auteur décrit ce qu'il veut ou ce qui ne va pas ; l'IA propose ou corrige.
 2. Chaque fonctionnalité est accompagnée de tests (serveur, client, e2e) lancés avant de la considérer finie.
 3. Les exigences sont suivies dans `docs/EXIGENCES.md` avec un statut honnête, y compris ce qui manque.
-4. Le code est relu par l'auteur via les commits sur GitHub.
+4. Le code est visible sur GitHub à chaque commit ; l'auteur ne comprend pas tout le code produit par l'IA (voir la réflexion), ce qui est une limite assumée.
 
 ## 3. Trois situations où il a fallu corriger l'IA
 
@@ -40,4 +39,4 @@ Ces trois histoires sont racontées par l'auteur, à partir de ses propres essai
 
 - OAuth (Discord, GitHub) est codé et testé, mais pas activé en production.
 - Hébergement sur Render (gratuit) et non sur un VPS.
-- Les mesures Lighthouse sont faites en local ; à refaire sur le site en ligne.
+- Lighthouse a été mesuré sur le site en ligne (Performance 91 à 100 en Desktop, 83 en Mobile avant optimisation ; les trois autres catégories à 100).
