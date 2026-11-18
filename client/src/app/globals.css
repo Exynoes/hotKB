@@ -168,7 +168,7 @@ main {
   position: relative;
   height: 2.5rem;
   border-radius: 9999px;
-  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
   border: 1px solid var(--border);
   overflow: hidden;
 }
@@ -178,7 +178,7 @@ main {
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -370,4 +370,10 @@ main {
   .fire-flame, .on-fire, .fire-label { animation: none; }
   .fire-flame { transition: none; }
   .fire-spark, .fire-smoke { display: none; }
+}
+
+/* ---- Focus clavier : même anneau partout (palette HotKB), visible en clair et en sombre ---- */
+:focus-visible {
+  outline: 3px solid var(--accent-text);
+  outline-offset: 3px;
 }
