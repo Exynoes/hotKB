@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { FLAME_SHAPES } from './flameShapes';
 
 const EMBERS = Array.from({ length: 30 }, (_, i) => ({
   left: `${(i * 11 + 3) % 100}%`,
@@ -8,52 +9,66 @@ const EMBERS = Array.from({ length: 30 }, (_, i) => ({
   sway: `${((i % 2 === 0 ? 1 : -1) * (14 + ((i * 7) % 40)))}px`,
 }));
 
-/** Langues de flamme au bas de la page : position, taille, rythme et couleur de chacune. */
+/** Flammes au bas de la page : position, forme (0 à 3), hauteur en vh, rythme et dégradé de chacune. */
 const TONGUES = [
-  { left: '-3%', width: 15, height: 34, duration: 2.6, delay: 0, color: 'var(--accent)' },
-  { left: '8%', width: 11, height: 24, duration: 2.1, delay: -0.8, color: 'var(--accent-2)' },
-  { left: '17%', width: 16, height: 38, duration: 3.1, delay: -1.4, color: 'var(--accent)' },
-  { left: '30%', width: 12, height: 27, duration: 2.3, delay: -0.3, color: 'var(--success)' },
-  { left: '40%', width: 17, height: 42, duration: 2.9, delay: -2, color: 'var(--accent)' },
-  { left: '53%', width: 12, height: 26, duration: 2.2, delay: -1.1, color: 'var(--accent-2)' },
-  { left: '62%', width: 16, height: 36, duration: 3.3, delay: -0.6, color: 'var(--accent)' },
-  { left: '75%', width: 11, height: 25, duration: 2.4, delay: -1.7, color: 'var(--success)' },
-  { left: '84%', width: 16, height: 40, duration: 2.8, delay: -0.2, color: 'var(--accent)' },
-  { left: '95%', width: 12, height: 28, duration: 2.5, delay: -1.2, color: 'var(--accent-2)' },
+  { left: '-3%', shape: 0, height: 34, duration: 2.6, delay: 0, grad: 'a' },
+  { left: '8%', shape: 2, height: 22, duration: 2.1, delay: -0.8, grad: 'b' },
+  { left: '17%', shape: 1, height: 38, duration: 3.1, delay: -1.4, grad: 'a' },
+  { left: '30%', shape: 3, height: 26, duration: 2.3, delay: -0.3, grad: 'b' },
+  { left: '40%', shape: 0, height: 42, duration: 2.9, delay: -2, grad: 'a' },
+  { left: '53%', shape: 2, height: 24, duration: 2.2, delay: -1.1, grad: 'b' },
+  { left: '62%', shape: 3, height: 36, duration: 3.3, delay: -0.6, grad: 'a' },
+  { left: '75%', shape: 1, height: 25, duration: 2.4, delay: -1.7, grad: 'b' },
+  { left: '84%', shape: 0, height: 40, duration: 2.8, delay: -0.2, grad: 'a' },
+  { left: '95%', shape: 3, height: 28, duration: 2.5, delay: -1.2, grad: 'b' },
 ];
 
 /**
- * Fond décoratif : langues de flamme qui dansent en bas de page, grosses taches de lumière qui ondulent
+ * Fond décoratif : flammes plates qui dansent en bas de page, grosses taches de lumière qui ondulent
  * et braises qui montent en se balançant. Tout s'arrête avec « réduire les animations ».
  */
 export default function FlameBackground() {
   return (
     <div className="flame-bg" aria-hidden="true">
+      {/* dégradés partagés par les flammes, aux couleurs de la palette (clair et sombre) */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <linearGradient id="hk-flame-a" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style={{ stopColor: 'var(--success)' }} />
+            <stop offset="1" style={{ stopColor: 'var(--accent)' }} />
+          </linearGradient>
+          <linearGradient id="hk-flame-b" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style={{ stopColor: 'var(--accent-2)' }} />
+            <stop offset="1" style={{ stopColor: 'var(--accent)' }} />
+          </linearGradient>
+        </defs>
+      </svg>
       <div className="flame-glow" />
       <div className="flame flame-1" />
       <div className="flame flame-2" />
       <div className="flame flame-3" />
       <div className="flame flame-4" />
-      {TONGUES.map((f, i) => (
-        <svg
-          key={i}
-          className="tongue"
-          viewBox="0 0 40 80"
-          preserveAspectRatio="none"
-          style={
-            {
-              left: f.left,
-              width: `${f.width}vw`,
-              height: `${f.height}vh`,
-              color: f.color,
-              animationDuration: `${f.duration}s`,
-              animationDelay: `${f.delay}s`,
-            } as CSSProperties
-          }
-        >
-          <path d="M20 0 C23 18 38 30 38 52 C38 68 30 80 20 80 C10 80 2 68 2 52 C2 38 12 32 14 18 C16 24 18 22 20 0 Z" />
-        </svg>
-      ))}
+      {TONGUES.map((f, i) => {
+        const shape = FLAME_SHAPES[f.shape];
+        return (
+          <svg
+            key={i}
+            className="tongue"
+            viewBox={`0 0 ${shape.w} 100`}
+            style={
+              {
+                left: f.left,
+                height: `${f.height}vh`,
+                width: `${(f.height * shape.w) / 100}vh`,
+                animationDuration: `${f.duration}s`,
+                animationDelay: `${f.delay}s`,
+              } as CSSProperties
+            }
+          >
+            <path d={shape.d} fillRule="evenodd" fill={`url(#hk-flame-${f.grad})`} />
+          </svg>
+        );
+      })}
       {EMBERS.map((e, i) => (
         <span
           key={i}

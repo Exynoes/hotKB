@@ -141,7 +141,7 @@ main {
   position: absolute;
   bottom: -3vh;
   fill: currentColor;
-  opacity: 0.38;
+  opacity: 0.45;
   transform-origin: 50% 100%;
   animation: dance 2.6s ease-in-out infinite alternate;
 }
