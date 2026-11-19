@@ -65,6 +65,7 @@ const dict = {
     errorText: 'Quelque chose s’est mal passé. Tu peux réessayer ou revenir à l’accueil.',
     goHome: 'Retour à l’accueil',
     retry: 'Réessayer',
+    flameCredit: 'Flammes : « Flames multiple colours set » par juicy_fish, conçu par',
     ...raceFr,
   },
   en: {
@@ -125,6 +126,7 @@ const dict = {
     errorText: 'Something went wrong. You can try again or go back to the home page.',
     goHome: 'Back to home',
     retry: 'Try again',
+    flameCredit: 'Flames: “Flames multiple colours set” by juicy_fish, designed by',
     ...raceEn,
   },
 } as const;

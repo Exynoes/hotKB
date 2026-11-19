@@ -183,6 +183,17 @@ export default function HomeView() {
           <TypingDemo />
           <RaceTrack />
         </div>
+
+        {/* attribution exigée par la licence gratuite Magnific des flammes (voir docs/DEMARCHE-CREATIVE.md) */}
+        <footer
+          className="rounded-xl px-4 py-2 text-sm"
+          style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--muted)' }}
+        >
+          {t('flameCredit')}{' '}
+          <a href="https://www.magnific.com" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--fg)' }}>
+            Magnific
+          </a>
+        </footer>
       </main>
     </>
   );

@@ -74,7 +74,7 @@ Thème clair et thème sombre, préférence système respectée par défaut, sé
 
 ### Source des flammes
 - Série de flammes plates trouvée sur **Magnific (Freepik)** : « Flames multiple colours set », par **juicy_fish**, [page du fichier](https://www.magnific.com/free-vector/flames-multiple-colours-set_417965632.htm) (page consultée le 19 novembre 2026).
-- Licence : [À COMPLÉTER APRÈS LECTURE de l'onglet « License » sur la page du fichier : usage permis ? attribution obligatoire ? texte exact à afficher]. Si l'attribution est exigée, l'ajouter ici et dans le pied de page du site.
+- Licence : **gratuite, attribution obligatoire** (page du fichier, onglet d'information, 19 novembre 2026). Règle de Magnific : écrire « Designed by Magnific » avec un lien vers magnific.com, bien visible, par exemple dans le pied de page du site ([règles](https://www.magnific.com/ai/docs/licenses-attribution)). Fait : pied de page de l'accueil avec le nom du fichier, l'auteur (juicy_fish) et le lien Magnific, en français et en anglais.
 - Traitement : l'image a été choisie et téléchargée par l'auteur ; l'IA a extrait les silhouettes et les a converties en tracés SVG (`client/src/components/flameShapes.ts`), recolorées avec la palette du site (flamme, braise, miel).
 
 ### Pourquoi ce choix (mots de l'auteur)
