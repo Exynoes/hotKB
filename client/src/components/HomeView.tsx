@@ -59,7 +59,14 @@ export default function HomeView() {
               {room.members.find((m) => m.id === myId)?.isHost ? (
                 <>
                   <button onClick={rm.rematch} className="rounded-xl px-5 py-3 font-bold text-white" style={{ background: 'var(--accent-btn)' }}>{t('rematch')}</button>
-                  <button onClick={rm.backToLobby} className="underline">{t('backToLobby')}</button>
+                  {/* action secondaire : bordure, sans fond plein (un seul bouton primaire par page) */}
+                  <button
+                    onClick={rm.backToLobby}
+                    className="rounded-xl px-5 py-3 font-bold"
+                    style={{ border: '2px solid var(--muted)', background: 'var(--surface)' }}
+                  >
+                    {t('backToLobby')}
+                  </button>
                   <button onClick={rm.closeRoom} className="underline">{t('closeRoom')}</button>
                 </>
               ) : (
@@ -176,6 +183,17 @@ export default function HomeView() {
           <TypingDemo />
           <RaceTrack />
         </div>
+
+        {/* attribution exigée par la licence gratuite Magnific des flammes (voir docs/DEMARCHE-CREATIVE.md) */}
+        <footer
+          className="rounded-xl px-4 py-2 text-sm"
+          style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--muted)' }}
+        >
+          {t('flameCredit')}{' '}
+          <a href="https://www.magnific.com" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--fg)' }}>
+            Magnific
+          </a>
+        </footer>
       </main>
     </>
   );

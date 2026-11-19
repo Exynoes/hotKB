@@ -134,10 +134,24 @@ main {
 @keyframes rise {
   0%   { transform: translateY(0) translateX(0); opacity: 0; }
   10%  { opacity: 0.9; }
-  100% { transform: translateY(-85vh) translateX(30px); opacity: 0; }
+  100% { transform: translateY(-85vh) translateX(var(--sway, 30px)); opacity: 0; }
+}
+/* langues de flamme au bas de la page */
+.tongue {
+  position: absolute;
+  bottom: -3vh;
+  fill: currentColor;
+  opacity: 0.45;
+  transform-origin: 50% 100%;
+  animation: dance 2.6s ease-in-out infinite alternate;
+}
+@keyframes dance {
+  0%   { transform: scaleY(0.78) scaleX(1.04) skewX(-5deg); }
+  50%  { transform: scaleY(1.05) scaleX(0.94) skewX(3deg); }
+  100% { transform: scaleY(0.92) scaleX(1.02) skewX(5deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .flame, .flame-glow { animation: none; }
+  .flame, .flame-glow, .tongue { animation: none; }
   .ember { display: none; }
 }
 
@@ -151,10 +165,11 @@ main {
   gap: 0.5rem;
 }
 .lane {
+  --label-w: 8.5rem; /* place réservée au nom et aux MPM : le coureur ne passe jamais dessus */
   position: relative;
   height: 2.5rem;
   border-radius: 9999px;
-  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
   border: 1px solid var(--border);
   overflow: hidden;
 }
@@ -164,9 +179,10 @@ main {
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   color: var(--muted);
   white-space: nowrap;
+  z-index: 2; /* le texte reste au-dessus de la traînée du coureur */
 }
 .finish {
   position: absolute;
@@ -180,7 +196,7 @@ main {
 .runner {
   position: absolute;
   top: 50%;
-  left: var(--rest);
+  left: max(var(--rest), var(--label-w));
   transform: translateY(-50%);
   width: 1.9rem;
   height: 1.9rem;
@@ -215,7 +231,7 @@ main {
   opacity: 0.8;
 }
 @keyframes run {
-  from { left: 0.4rem; }
+  from { left: var(--label-w); }
   to   { left: calc(100% - 2.4rem); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -273,4 +289,93 @@ main {
   font-weight: 700;
   font-size: 1.5rem;
   box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 60%, black);
+}
+
+/* ---- Flamme de vitesse (décorative) : grandit avec les MPM, étincelles, fumée, série « en feu » ---- */
+.fire-meter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  height: 5rem;
+  pointer-events: none;
+}
+.fire-label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--accent-text);
+  animation: pop 0.4s ease-out;
+}
+.fire-stage {
+  position: relative;
+  width: 3rem;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.fire-flame {
+  width: 2.4rem;
+  transform: scale(var(--scale, 0.55));
+  transform-origin: 50% 100%;
+  transition: transform 400ms ease-out;
+  overflow: visible;
+  animation: flicker 1.4s ease-in-out infinite alternate;
+}
+.fire-outer { fill: var(--accent); }
+.fire-inner { fill: var(--accent-2); }
+.is-fire .fire-outer { filter: drop-shadow(0 0 6px var(--accent)); }
+.is-fire .fire-inner { fill: var(--success); }
+.fire-spark {
+  position: absolute;
+  bottom: 40%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 6px 2px var(--accent);
+  animation: spark 0.6s ease-out forwards;
+}
+.fire-smoke {
+  position: absolute;
+  bottom: 30%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: var(--muted);
+  filter: blur(3px);
+  animation: smoke 0.9s ease-out forwards;
+}
+@keyframes spark {
+  0%   { transform: translate(-50%, 0) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx, 0px)), -2.6rem) scale(0.2); opacity: 0; }
+}
+@keyframes smoke {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0.6; }
+  100% { transform: translateY(-2.4rem) scale(1.6); opacity: 0; }
+}
+@keyframes pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  70%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes fire-glow {
+  from { box-shadow: 0 0 6px 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  to   { box-shadow: 0 0 20px 4px color-mix(in srgb, var(--accent-2) 60%, transparent); }
+}
+.on-fire { animation: fire-glow 0.8s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) {
+  .fire-flame, .on-fire, .fire-label { animation: none; }
+  .fire-flame { transition: none; }
+  .fire-spark, .fire-smoke { display: none; }
+}
+
+/* ---- Focus clavier : même anneau partout (palette HotKB), visible en clair et en sombre ---- */
+:focus-visible {
+  outline: 3px solid var(--accent-text);
+  outline-offset: 3px;
 }

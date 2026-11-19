@@ -4,6 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { BonusEvent, RaceStart, RoomState, Tick } from '../lib/room-types';
 import { useLang } from '../lib/i18n';
 import LiveTrack from './LiveTrack';
+import FireMeter from './FireMeter';
+
+/** Nombre de lettres justes d'affilée pour que la série soit « en feu » (effet visuel seulement). */
+const FIRE_STREAK = 15;
 
 interface Props {
   room: RoomState;
@@ -38,6 +42,9 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
   const [mistakes, setMistakes] = useState(0);
   const [confirm, setConfirm] = useState(false);
   const [coarse, setCoarse] = useState(false);
+  const [streak, setStreak] = useState(0); // lettres justes d'affilée (effet visuel seulement)
+  const [sparkKey, setSparkKey] = useState(0);
+  const [smokeKey, setSmokeKey] = useState(0);
   const buffer = useRef('');
   const posRef = useRef(race.pos);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -87,7 +94,11 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
         setPos(p + 1);
         setStuck(false);
         setTyped('');
+        setStreak((s) => s + 1);
+        setSparkKey((k) => k + 1);
       } else {
+        setStreak(0);
+        setSmokeKey((k) => k + 1);
         setFlash(true);
         setTimeout(() => setFlash(false), 250);
         setMistakes((m) => m + 1);
@@ -195,6 +206,10 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
         </div>
       ) : null}
 
+      {isRunner && remaining <= 0 && (
+        <FireMeter wpm={me?.wpm ?? 0} sparkKey={sparkKey} smokeKey={smokeKey} fire={streak >= FIRE_STREAK} label={t('onFire')} />
+      )}
+
       {isRunner ? (
         <div
           ref={boxRef}
@@ -203,7 +218,7 @@ export default function RaceScreen({ room, race, text, tick, myId, bonusLog, clo
           aria-label={t('typeHere')}
           onFocus={focusInput}
           onClick={focusInput}
-          className="relative rounded-2xl p-5 text-left outline-none focus-visible:ring-2 select-none"
+          className={`relative rounded-2xl p-5 text-left outline-none focus-visible:ring-2 select-none${streak >= FIRE_STREAK ? ' on-fire' : ''}`}
           style={{
             background: 'var(--surface)',
             border: `2px solid ${flash ? 'var(--danger)' : 'var(--border)'}`,

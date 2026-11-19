@@ -69,3 +69,16 @@ Une palette entièrement chaude, cohérente avec le nom :
 ### Thèmes (DES-05)
 
 Thème clair et thème sombre, préférence système respectée par défaut, sélecteur manuel mémorisé.
+
+## 4. Flammes animées du fond (ajout sur la branche `ui-artistique`)
+
+### Source des flammes
+- Série de flammes plates trouvée sur **Magnific (Freepik)** : « Flames multiple colours set », par **juicy_fish**, [page du fichier](https://www.magnific.com/free-vector/flames-multiple-colours-set_417965632.htm) (page consultée le 19 novembre 2026).
+- Licence : **gratuite, attribution obligatoire** (page du fichier, onglet d'information, 19 novembre 2026). Règle de Magnific : écrire « Designed by Magnific » avec un lien vers magnific.com, bien visible, par exemple dans le pied de page du site ([règles](https://www.magnific.com/ai/docs/licenses-attribution)). Fait : pied de page de l'accueil avec le nom du fichier, l'auteur (juicy_fish) et le lien Magnific, en français et en anglais.
+- Traitement : l'image a été choisie et téléchargée par l'auteur ; l'IA a extrait les silhouettes et les a converties en tracés SVG (`client/src/components/flameShapes.ts`), recolorées avec la palette du site (flamme, braise, miel).
+
+### Pourquoi ce choix (mots de l'auteur)
+« Je voulais des flammes plus stylisées, mais aussi classiques, pour les enfants, car le site est plutôt pour des enfants et les dessins sont meilleurs pour eux. »
+
+### Ce qui reste de l'auteur
+Le nom, le logo et la direction artistique de départ (DES-01, DES-02, DES-03) n'ont pas changé et ont été faits sans IA. Les animations (flamme de vitesse, fond) ont été codées par l'IA sous sa direction ; voir `docs/IA.md`, section 6.
