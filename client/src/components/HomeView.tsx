@@ -59,7 +59,14 @@ export default function HomeView() {
               {room.members.find((m) => m.id === myId)?.isHost ? (
                 <>
                   <button onClick={rm.rematch} className="rounded-xl px-5 py-3 font-bold text-white" style={{ background: 'var(--accent-btn)' }}>{t('rematch')}</button>
-                  <button onClick={rm.backToLobby} className="underline">{t('backToLobby')}</button>
+                  {/* action secondaire : bordure, sans fond plein (un seul bouton primaire par page) */}
+                  <button
+                    onClick={rm.backToLobby}
+                    className="rounded-xl px-5 py-3 font-bold"
+                    style={{ border: '2px solid var(--muted)', background: 'var(--surface)' }}
+                  >
+                    {t('backToLobby')}
+                  </button>
                   <button onClick={rm.closeRoom} className="underline">{t('closeRoom')}</button>
                 </>
               ) : (
