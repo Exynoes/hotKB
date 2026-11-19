@@ -40,3 +40,18 @@ Ces trois histoires sont racontées par l'auteur, à partir de ses propres essai
 - OAuth (Discord, GitHub) est codé et testé, mais pas activé en production.
 - Hébergement sur Render (gratuit) et non sur un VPS.
 - Lighthouse a été mesuré sur le site en ligne (Performance 91 à 100 en Desktop, 83 en Mobile avant optimisation ; les trois autres catégories à 100).
+
+## 6. Travail de l'IA sur la branche `ui-artistique` (brouillon à relire)
+
+Direction donnée par l'auteur : une interface plus artistique et plus agréable (UI/UX), aux couleurs de la flamme, avec des animations de feu liées au nom et au logo. Il a choisi les effets, le style de flammes plates et les corrections ; l'IA les a codés.
+
+- **Flamme de vitesse** pendant la course : elle grandit avec les MPM, lance des étincelles à chaque bonne lettre, de la fumée à chaque faute, et l'état « en feu » apparaît après 15 lettres justes d'affilée (`FireMeter.tsx`, `RaceScreen.tsx`).
+- **Fond animé** : langues de flamme, taches de lumière et braises (`FlameBackground.tsx`). Les formes viennent d'une image téléchargée par l'auteur ; l'IA les a tracées en SVG (`flameShapes.ts`). Source et licence : voir `docs/DEMARCHE-CREATIVE.md`, section 4.
+- **Pages 404 et erreur** aux couleurs du site (`StatusPage.tsx`, `not-found.tsx`, `error.tsx`), textes FR et EN.
+- **Accessibilité** : anneau de focus clavier commun, texte plus grand dans les pistes, animations coupées avec « réduire les animations ».
+- **Boutons** : « Retour à la salle » devenu bouton secondaire (un seul bouton principal par page).
+- **Piste de course** : le coureur ne passe plus sur le nom du joueur (0 chevauchement mesuré).
+- **Sécurité** : mise à jour de Next.js vers 16.4.6 (la version précédente avait des failles connues et faisait échouer le build).
+- **Vérification** : build de production, captures d'écran de l'accueil et des écrans de course et de résultats, essai de l'auteur sur son ordinateur.
+
+Rien de ceci ne touche au nom, au logo ni à la direction artistique de départ (DES-01, DES-02), conçus par l'auteur sans IA.

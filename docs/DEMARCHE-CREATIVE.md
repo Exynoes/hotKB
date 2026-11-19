@@ -69,3 +69,16 @@ Une palette entièrement chaude, cohérente avec le nom :
 ### Thèmes (DES-05)
 
 Thème clair et thème sombre, préférence système respectée par défaut, sélecteur manuel mémorisé.
+
+## 4. Flammes animées du fond (ajout sur la branche `ui-artistique`)
+
+### Source des flammes
+- Série de flammes plates trouvée sur **Magnific (Freepik)** : [À COMPLÉTER : lien de la page, nom de l'auteur du fichier, date de téléchargement].
+- Licence : [À COMPLÉTER APRÈS LECTURE de l'onglet « License » sur la page du fichier : usage permis ? attribution obligatoire ? texte exact à afficher]. Si l'attribution est exigée, l'ajouter ici et dans le pied de page du site.
+- Traitement : l'image a été choisie et téléchargée par l'auteur ; l'IA a extrait les silhouettes et les a converties en tracés SVG (`client/src/components/flameShapes.ts`), recolorées avec la palette du site (flamme, braise, miel).
+
+### Pourquoi ce choix (mots de l'auteur)
+[À ÉCRIRE PAR L'AUTEUR : pourquoi des flammes plates plutôt qu'une photo réaliste, le lien avec le nom et le logo, le public visé (plus ludique, pour les jeunes).]
+
+### Ce qui reste de l'auteur
+Le nom, le logo et la direction artistique de départ (DES-01, DES-02, DES-03) n'ont pas changé et ont été faits sans IA. Les animations (flamme de vitesse, fond) ont été codées par l'IA sous sa direction ; voir `docs/IA.md`, section 6.
