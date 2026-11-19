@@ -78,7 +78,7 @@ Thème clair et thème sombre, préférence système respectée par défaut, sé
 - Traitement : l'image a été choisie et téléchargée par l'auteur ; l'IA a extrait les silhouettes et les a converties en tracés SVG (`client/src/components/flameShapes.ts`), recolorées avec la palette du site (flamme, braise, miel).
 
 ### Pourquoi ce choix (mots de l'auteur)
-[À ÉCRIRE PAR L'AUTEUR : pourquoi des flammes plates plutôt qu'une photo réaliste, le lien avec le nom et le logo, le public visé (plus ludique, pour les jeunes).]
+« Je voulais des flammes plus stylisées, mais aussi classiques, pour les enfants, car le site est plutôt pour des enfants et les dessins sont meilleurs pour eux. »
 
 ### Ce qui reste de l'auteur
 Le nom, le logo et la direction artistique de départ (DES-01, DES-02, DES-03) n'ont pas changé et ont été faits sans IA. Les animations (flamme de vitesse, fond) ont été codées par l'IA sous sa direction ; voir `docs/IA.md`, section 6.
