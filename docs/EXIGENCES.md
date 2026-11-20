@@ -34,7 +34,7 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | DES-01 | complet | `docs/DEMARCHE-CREATIVE.md` | — | Nom « HotKB » trouvé par l'auteur (patate chaude + clavier chaud + initiales de *keyboard*). Vérification d'originalité faite après coup : « Hot Keyboard » (logiciel de macros Windows) est proche mais d'une autre catégorie ; l'enseignant a confirmé le 6 octobre 2026 (Discord) que le nom est accepté |
 | DES-02 | complet | `docs/DEMARCHE-CREATIVE.md`, `docs/demarche-creative/`, `client/public/logo.png` | — | Concept, croquis et assemblage de l'auteur ; flamme issue de la bibliothèque Canva et touches K/B rendues avec l'aide d'un outil d'IA (détaillé dans la démarche créative). L'enseignant a confirmé qu'un croquis de l'auteur suffit |
 | DES-03 | complet | `docs/DEMARCHE-CREATIVE.md` | — | Palette, typographies et moodboard de 4 références, avec le commentaire personnel de l'auteur sur chacune |
-| DES-04 | complet | `LiveTrack.tsx`, `RaceTrack.tsx`, `TypingDemo.tsx`, `FlameBackground.tsx` | e2e | Palette chaude personnalisée, aucun composant shadcn, aucun emoji en guise d'icône. Élément signature : la piste de course, animée sur l'accueil et reliée aux vraies courses (`LiveTrack`) |
+| DES-04 | complet | `LiveTrack.tsx`, `RaceTrack.tsx`, `TypingDemo.tsx`, `FlameBackground.tsx` | e2e | Palette chaude personnalisée, aucun composant shadcn, aucun emoji en guise d'icône. Élément signature : la piste de course, animée sur l'accueil et reliée aux vraies courses (`LiveTrack`). Ajouts du 19 novembre : flammes plates animées en fond (`flameShapes.ts`, source et attribution Magnific dans `docs/DEMARCHE-CREATIVE.md`), flamme de vitesse en course (`FireMeter.tsx`), pages 404 et erreur aux couleurs du site ; animations coupées avec « réduire les animations » |
 | DES-05 | complet | `client/src/app/layout.tsx`, `client/src/lib/theme.tsx` | e2e | Sélecteur, préférence système par défaut, script avant rendu : aucun flash du mauvais thème |
 | DES-06 | complet | `client/src/components/`, `RaceScreen.tsx` | vérifié à 360 px | Mise en page adaptative ; sur écran tactile, la course affiche un message demandant un clavier |
 
@@ -125,7 +125,7 @@ Statuts : **complet** · **partiel** · **non fait**. Rien n'est déclaré « co
 | A11Y-01 | complet | `globals.css` | Lighthouse | Contrastes WCAG AA (`--accent-btn`, `--muted`) ; audit d'accessibilité Lighthouse à 100 sur le site en ligne |
 | A11Y-02 | complet | `layout.tsx`, `HomeView.tsx`, `TopBar.tsx`, `Footer.tsx` | Lighthouse | `<main>`, `<header>`, `<nav>` (étiqueté), `<footer>`, un `<h1>` par page |
 | A11Y-03 | complet | `Lobby.tsx`, `AuthPanel.tsx`, `HomeView.tsx` | Lighthouse | Champs avec `<label>` ou `aria-label` ; le `placeholder` n'est qu'un indice en plus |
-| A11Y-04 | partiel | — | — | Navigation clavier native ; zone de frappe focalisable (`tabIndex`) |
+| A11Y-04 | partiel | `globals.css` | vérifié à la main (clavier) | Navigation clavier native ; zone de frappe focalisable (`tabIndex`) ; anneau de focus visible commun à tout le site (`:focus-visible`). Pas de test automatisé : reste partiel |
 | SEC-01 | complet | `rooms/manager.ts` | `room-flow.test.ts` | Toutes les actions d'hôte vérifiées côté serveur |
 | SEC-02 | complet | `routes/profile.ts` | `profile-edit.test.ts` | Téléversement : taille limitée, signature de fichier, ré-encodage par `sharp` (le fichier d'origine n'est jamais servi) |
 | SEC-03 | complet | `routes/auth.ts` | `auth.test.ts` | bcrypt ; jamais stocké ni journalisé en clair |
